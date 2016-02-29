@@ -1,0 +1,1966 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>北京地铁</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
+
+    <style>
+        html, body, #map{
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .stat-name-box{
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            z-index: 10;
+            border: rgb(139, 164, 220) 1px solid;
+            width: auto;
+            height: auto;
+            font:normal 11px "宋体",Arial;
+            color: rgb(0, 0, 0);
+            background: rgb(255, 255, 255);
+            box-shadow: rgba(0, 0, 0, 0.34902) 2px 2px 3px;
+            border-radius: 3px;
+            padding: 3px 5px;
+        }
+        .legend-box{
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            border: rgb(139, 164, 220) 1px solid;
+            width: 130px;
+            height: auto;
+            color: rgb(0, 0, 0);
+            background: rgb(255, 255, 255);
+            box-shadow: rgba(0, 0, 0, 0.34902) 2px 2px 3px;
+            border-radius: 3px;
+        }
+        tr{
+            padding: 2px 8px;
+        }
+        .tr-title{
+            text-align: center;
+            font:bold 13px "宋体",Arial;
+            padding: 3px 0px;
+            background: rgb(139, 164, 220);
+            color: #ffffff;
+            border-radius: 3px;
+        }
+        .tr-title:hover{
+            cursor: pointer;
+        }
+        .legend-item-color{
+            width: 10px;
+            height: 10px;
+            float: left;
+            background: rgb(139, 164, 220);
+            margin-top: 5px;
+        }
+        .legend-item-text{
+            font:normal 8px "宋体",Arial;
+            padding: 3px 5px;
+            float: left;
+        }
+
+        ul.labelbox-ul  {
+             padding-left: 20px;
+         }
+        /*
+         ul.labelbox-ul li{
+         list-style-type: none;
+                }*/
+    </style>
+
+    <script src="http://js.arcgis.com/3.14/init.js"></script>
+    <script src="{{ asset('bundles/luxueweb/js/vendor/bj_sub_data.js') }}"></script>
+    <script src="{{ asset('bundles/luxueweb/js/vendor/jquery-1.11.2.min.js') }}"></script>
+    {% block title %}<title>换乘车站调查</title>{% endblock %}
+
+    {% block public_css %}
+        <!-- Bootstrap core CSS -->
+        <link href="{{ asset('bundles/luxueweb/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/luxueweb/css/bootstrap-glyphicons.css') }}" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="{{ asset('bundles/luxueweb/css/bodystyle.css') }}" rel="stylesheet">
+    {% endblock %}
+    {% block private_css %}
+    {% endblock %}
+    {% block public_js %}
+
+        <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/jquery-1.11.2.min.js') }}"></script>
+    {% endblock %}
+</head>
+
+<body>
+<div class="container">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" style="font-size: large" href="">地铁换乘站数据分析与预测系统</a>
+        </div>
+        <!--end navbar-header-->
+        <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" placeholder="邮箱/用户名" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="密码" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">登 陆</button>
+            </form>
+        </div><!--/.navbar-collapse -->
+    </div>
+</nav>
+    <div class="masthead">
+        <h3 class="text-muted"></h3>
+        <nav>
+            <ul class="nav nav-justified">
+                {% block nav %}
+                    <li><a href="{{ url('luxue_web_default_dataget')}}">数据获取</a></li>
+                    <li><a href="{{url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
+                    <li class="active"><a href="{{url('luxue_web_default_dataview')}}">结果可视化</a></li>
+                    <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
+                {% endblock %}
+            </ul>
+        </nav>
+    </div>
+<div id="map" style="margin-left: auto;margin-right: auto" class="map" data-zoom="0" data-scale="18489297.737236" data-loaded="">
+    <div id="map_root" class="container" style="width: 100%; height: 100%; direction: ltr;">
+        <div id="map_container" class="container" style="position: absolute; cursor: default; clip: auto;">
+        <div class="labelbox" id="L1306"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:20px;left: 440px;background-color:#e5e5e5">
+            <ul class="labelbox-ul">
+                <li >车站名称：西二旗</li>
+                <li >所属线路：
+                    <ul>
+                        <li>北京地铁昌平线</li>
+                        <li>北京地铁13号线</li>
+                    </ul>
+                </li>
+                <li style="text-decoration-color: #0000F0">分析结果：</li>
+                <ul>
+                <li style="text-decoration-color: #0000F0">客流吸引级别 3</li>
+                <li><a href="{{ url('luxue_web_dataview_imagedisplay')}}" target="_blank">车站详细数据</a></li>
+                </ul>
+            </ul>
+        </div>
+            <div id="map_layers" class="layersDiv" style="">
+                <div id="map_tiled" style="position: absolute; width: 1440px; height: 635px; overflow: visible; -webkit-transform: translate(0px, 0px);">
+                    <div style="position: absolute; width: 1440px; height: 635px; overflow: visible; -webkit-transition: -webkit-transform 500ms ease; transition: -webkit-transform 500ms ease;">
+                    </div>
+                </div>
+                <svg overflow="hidden" width="1440" height="635" id="map_gc" style="overflow: visible; position: absolute;margin-left:-150px;
+  margin-top: 40px;">
+                    <g id="subwayLine_layer" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,25.00000000,-133.00000000)"
+                       style="display: block;">
+                        <g>
+                        </g>
+                        <path fill="none" fill-opacity="0" stroke="rgb(217, 37, 40)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 317,438 327,454 353,454 383,454 407,454 431,454 453,454 475,454 502,454 531,454 555,454 572,454 605,454 627,454 653,454 677,454 694,454 723,454 755,454 770,454 797,454 814,454 831,454"
+                              d="M 317 438 327 454 353 454 383 454 407 454 431 454 453 454 475 454 502 454 531 454 555 454 572 454 605 454 627 454 653 454 677 454 694 454 723 454 755 454 770 454 797 454 814 454 831 454"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(22, 109, 178)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 572,390 579,380 594,377 646,377 675,377 694,377 716,380 723,391 723,411 723,426 723,454 722,464 717,470 709,473 694,474 665,474 636,474 605,474 586,474 578,469 573,463 572,454 572,429 572,410 572,390"
+                              d="M 572 390 579 380 594 377 646 377 675 377 694 377 716 380 723 391 723 411 723 426 723 454 722 464 717 470 709 473 694 474 665 474 636 474 605 474 586 474 578 469 573 463 572 454 572 429 572 410 572 390"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(181, 28, 132)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 694,192 694,206 694,220 694,242 694,259 694,276 694,293 694,310 694,327 694,345 694,358 694,377 694,391 694,405 694,426 694,440 694,454 694,474 694,489 694,506 694,522 694,536 694,555"
+                              d="M 694 192 694 206 694 220 694 242 694 259 694 276 694 293 694 310 694 327 694 345 694 358 694 377 694 391 694 405 694 426 694 440 694 454 694 474 694 489 694 506 694 522 694 536 694 555"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(189, 144, 1)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 398,410 433,410 467,410 502,410 537,410 572,410 605,410 625,410 646,410 668,426 694,426 723,426 747,426 770,426 797,426 817,426 841,426 864,426 887,426 911,426 935,426 962,426 990,425 1026,478 1061,478 1090,478 1118,478"
+                              d="M 398 410 433 410 467 410 502 410 537 410 572 410 605 410 625 410 646 410 668 426 694 426 723 426 747 426 770 426 797 426 817 426 841 426 864 426 887 426 911 426 935 426 962 426 990 425 1026 478 1061 478 1090 478 1118 478"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(255, 144, 0)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 502,472 525,489 549,489 578,489 605,490 628,489 652,489 678,489 694,489 718,489 744,489 797,489 823,489 847,489 847,514 847,541 847,548 863,559 911,592 937,610"
+                              d="M 502 472 525 489 549 489 578 489 605 490 628 489 652 489 678 489 694 489 718 489 744 489 797 489 823 489 847 489 847 514 847 541 847 548 863 559 911 592 937 610"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(6, 150, 203)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 493,555 480,550 475,535 475,516 475,498 475,476 475,454 454,432 433,410 433,389 433,367 433,346 438,332 452,327 473,327 498,327 543,327 566,327 582,327 602,327 624,327 646,327 675,327 694,327 734,327 762,327 768,329 770,334 770,348 770,367 770,384 770,401 770,426 770,440 770,454 770,489 770,504 770,516 770,533 762,547 746,555 723,555 694,555 671,555 652,555 627,555 605,555 578,555 550,555 523,555 493,555"
+                              d="M 493 555 480 550 475 535 475 516 475 498 475 476 475 454 454 432 433 410 433 389 433 367 433 346 438 332 452 327 473 327 498 327 543 327 566 327 582 327 602 327 624 327 646 327 675 327 694 327 734 327 762 327 768 329 770 334 770 348 770 367 770 384 770 401 770 426 770 440 770 454 770 489 770 504 770 516 770 533 762 547 746 555 723 555 694 555 671 555 652 555 627 555 605 555 578 555 550 555 523 555 493 555"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(255, 214, 0)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 572,390 566,385 566,362 566,327 566,307 566,285 566,257 569,245 584,242 607,242 646,242 694,242 714,242 729,245 734,258 734,275 734,294 734,327 734,352 734,371 732,386 723,391"
+                              d="M 572 390 566 385 566 362 566 327 566 307 566 285 566 257 569 245 584 242 607 242 646 242 694 242 714 242 729 245 734 258 734 275 734 294 734 327 734 352 734 371 732 386 723 391"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(113, 66, 134)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 755,252 755,267 755,282 756,294 755,308 763,314 780,331 797,345 797,373 797,392 797,407 797,426"
+                              d="M 755 252 755 267 755 282 756 294 755 308 763 314 780 331 797 345 797 373 797 392 797 407 797 426"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(202, 30, 114)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 814,457 831,457 856,457 883,457 904,457 922,457 948,457 962,482 971,497 979,511 988,526 997,541 1007,557"
+                              d="M 814 457 831 457 856 457 883 457 904 457 922 457 948 457 962 482 971 497 979 511 988 526 997 541 1007 557"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(172, 150, 189)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 723,391 738,391 745,389 750,382 770,348 918,290 922,285 929,273 930,262 929,273 922,285 911,284 904,275 907,260 904,275 899,298 770,348 750,382 745,389 738,391"
+                              d="M 723 391 738 391 745 389 750 382 770 348 918 290 922 285 929 273 930 262 929 273 922 285 911 284 904 275 907 260 904 275 899 298 770 348 750 382 745 389 738 391"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(2, 169, 187)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 408,272 436,272 460,272 487,272 493,273 498,277 498,291 498,305 498,327 498,351 498,368 498,383 502,388 510,390 546,390 572,390 594,390 603,394 605,399 605,410 605,426 605,438 605,454 605,474 605,490 605,506 605,522 605,539 605,555 605,577 605,594 605,609 605,628 605,643 605,658 605,673 605,688 605,703 605,716 605,729 605,751"
+                              d="M 408 272 436 272 460 272 487 272 493 273 498 277 498 291 498 305 498 327 498 351 498 368 498 383 502 388 510 390 546 390 572 390 594 390 603 394 605 399 605 410 605 426 605 438 605 454 605 474 605 490 605 506 605 522 605 539 605 555 605 577 605 594 605 609 605 628 605 643 605 658 605 673 605 688 605 703 605 716 605 729 605 751"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(23, 153, 125)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 566,211 606,211 631,211 646,211 646,222 646,242 646,252 646,263 646,274 646,284 646,295 646,305 646,316 646,327 646,351 646,377 646,396 646,410"
+                              d="M 566 211 606 211 631 211 646 211 646 222 646 242 646 252 646 263 646 274 646 284 646 295 646 305 646 316 646 327 646 351 646 377 646 396 646 410"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(0, 169, 188)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 576,305 599,305 624,305 646,305 669,299 714,294 734,294 756,294 789,294 797,290 801,279 801,263 801,247 801,231 801,215 801,199 801,183 822,183 843,183 859,183"
+                              d="M 576 305 599 305 624 305 646 305 669 299 714 294 734 294 756 294 789 294 797 290 801 279 801 263 801 247 801 231 801 215 801 199 801 183 822 183 843 183 859 183"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(237, 154, 172)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 566,257 566,224 566,211 566,197 566,183 566,170 566,155" d="M 566 257 566 224 566 211 566 197 566 183 566 170 566 155"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(144, 186, 120)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 460,575 460,563 460,550 460,537 460,527 460,516 475,498 489,492 502,472 502,454 502,431 502,410 502,388"
+                              d="M 460 575 460 563 460 550 460 537 460 527 460 516 475 498 489 492 502 472 502 454 502 431 502 410 502 388"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(245, 85, 133)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 475,516 460,516 426,516 404,516 383,516 363,516 339,516" d="M 475 516 460 516 426 516 404 516 383 516 363 516 339 516"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(205, 44, 36)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 694,555 694,571 703,585 711,596 718,607 726,619 734,631 742,643 750,654 757,663 767,667 792,667 817,667 842,667"
+                              d="M 694 555 694 571 703 585 711 596 718 607 726 619 734 631 742 643 750 654 757 663 767 667 792 667 817 667 842 667"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                        <path fill="none" fill-opacity="0" stroke="rgb(235, 94, 25)" stroke-opacity="1"
+                              stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                              path="M 460,575 451,589 443,602 434,616 426,629 418,642 409,656 401,664 388,668 362,668 325,668 300,668"
+                              d="M 460 575 451 589 443 602 434 616 426 629 418 642 409 656 401 664 388 668 362 668 325 668 300 668"
+                              stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </path>
+                    </g>
+                    <g id="subwayStop_layer" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,25.00000000,-133.00000000)"
+                       style="display: block;">
+                        <g>
+                        </g>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="677" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="755" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="797" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="808"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="825"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="675" cy="377" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="371" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="385" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="723" cy="411" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="717" cy="470" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="665" cy="474" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="371" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="391" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="405" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="440" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="747" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="791"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="817" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="841" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="864" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="887" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="911" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="935" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="962" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="990" cy="425" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="1026" cy="478" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="1061" cy="478" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="384" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="401" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="440" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="734" cy="371" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="385" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="797" cy="373" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="797" cy="392" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="797" cy="407" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="791"
+                               y="420" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="808"
+                               y="451" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="825"
+                               y="451" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="856" cy="457" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="883" cy="457" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="904" cy="457" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="922" cy="457" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="948" cy="457" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="717"
+                               y="385" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="627" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="653" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="384" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="594" cy="377" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="371" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="636" cy="474" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="578" cy="469" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="572" cy="429" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="384" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="603" cy="394" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="426" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="438" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="259" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="276" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="293" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="310" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="345" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="358" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="625" cy="410" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="263" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="274" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="284" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="295" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="299" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="316" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="351" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="371" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="396" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+
+
+                        </image>
+
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="582" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="602" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="624" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="675" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="728"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="762" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="342" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="367" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                               y="384" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="362" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="307" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="285" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image  fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
+                               y="251" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="734" cy="275" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="728"
+                               y="288" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="728"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="734" cy="352" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="755" cy="267" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="755" cy="282" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="750"
+                               y="288" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="763" cy="314" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="780" cy="331" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="576" cy="305" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="599" cy="305" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="624" cy="305" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="299" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="669" cy="299" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="714" cy="294" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="728"
+                               y="288" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="750"
+                               y="288" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="279" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="263" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image id="西二旗" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
+                               y="251" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="342" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(172, 150, 189)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="930" cy="262" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(172, 150, 189)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="907" cy="260" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="764"
+                               y="342" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="383" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="407" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="431" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="453" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="469"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="531" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="555" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="408" cy="272" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="436" cy="272" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="460" cy="272" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="498" cy="277" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="498" cy="291" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="498" cy="305" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="498" cy="351" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="498" cy="368" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="382" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="546" cy="390" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="192" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="206" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="220" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="236" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="398" cy="410" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="427"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="467" cy="410" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="537" cy="410" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="466" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
+                               y="205" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="606" cy="211" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="631" cy="211" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="222" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="236" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(23, 153, 125)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="646" cy="252" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="466" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(144, 186, 120)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="502" cy="431" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="496"
+                               y="382" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="475" cy="476" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="469"
+                               y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="454" cy="432" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="427"
+                               y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="433" cy="389" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="433" cy="367" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="433" cy="346" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="452" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="473" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
+                               y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="543" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="584" cy="242" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 214, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="607" cy="242" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="640"
+                               y="236" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="236" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(113, 66, 134)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="755" cy="252" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="247" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="231" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="215" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="199" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="801" cy="183" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="822" cy="183" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="843" cy="183" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(0, 169, 188)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="859" cy="183" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(237, 154, 172)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="224" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
+                               y="205" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)" style="z-index: 100">
+                        </image>
+
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(237, 154, 172)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="197" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(237, 154, 172)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="183" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(237, 154, 172)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="170" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="317" cy="438" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="327" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="353" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="484" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="506" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="522" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="539" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="549" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="577" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="594" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="609" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="628" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="483" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="506" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="522" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(181, 28, 132)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="536" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="549" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="1090" cy="478" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(189, 144, 1)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="1118" cy="478" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="525" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="549" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="578" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="484" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="628" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="652" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="678" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="483" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="718" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="744" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="797" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="823" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="847" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="847" cy="514" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="847" cy="541" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="863" cy="559" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="911" cy="592" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(255, 144, 0)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="937" cy="610" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="454"
+                               y="569" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(144, 186, 120)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="460" cy="563" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(144, 186, 120)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="460" cy="550" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(144, 186, 120)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="460" cy="537" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(144, 186, 120)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="460" cy="527" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="454"
+                               y="510" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="469"
+                               y="492" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(144, 186, 120)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="489" cy="492" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="493" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="475" cy="535" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="469"
+                               y="510" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="469"
+                               y="492" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="489" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="504" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="516" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="770" cy="533" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="746" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="723" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="549" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="671" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="652" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="627" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
+                               y="549" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="578" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="550" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="523" cy="555" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="469"
+                               y="510" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="454"
+                               y="510" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(245, 85, 133)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="426" cy="516" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(245, 85, 133)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="404" cy="516" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(245, 85, 133)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="383" cy="516" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(245, 85, 133)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="363" cy="516" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(245, 85, 133)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="339" cy="516" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="962" cy="482" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="971" cy="497" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="979" cy="511" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="988" cy="526" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="997" cy="541" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(202, 30, 114)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="1007" cy="557" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(237, 154, 172)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="566" cy="155" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+
+                        </circle>
+
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
+                               y="549" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="694" cy="571" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="703" cy="585" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="711" cy="596" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="718" cy="607" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="726" cy="619" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="734" cy="631" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                               stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="454"
+                               y="569" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                               xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                        </image>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="451" cy="589" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="443" cy="602" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="434" cy="616" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="426" cy="629" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="643" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="658" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="673" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="688" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="703" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="716" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="729" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="742" cy="643" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="749" cy="654" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="767" cy="667" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="792" cy="667" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="817" cy="667" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(205, 44, 36)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="842" cy="667" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="418" cy="642" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="409" cy="656" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="388" cy="668" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="362" cy="668" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="325" cy="668" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(235, 94, 25)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="300" cy="668" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                        <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                                stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                stroke-miterlimit="4" cx="605" cy="751" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                        </circle>
+                    </g>
+                    <g id="subwayLabel_layer" data-hidden="">
+                        <g>
+                        </g>
+                    </g>
+                    <defs>
+                    </defs>
+                    <g id="map_graphics_layer" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,25.00000000,-133.00000000)"
+                       style="display: block;">
+                        <g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        <div class="esriControlsBR">
+      <span class="esriAttribution" style="max-width: 648px; cursor: default;">
+        <span class="esriAttributionList">
+        </span>
+      </span>
+        </div>
+        <div class="esriPopup" style="visibility: hidden; z-index: 40;">
+            <div class="esriPopupWrapper" style="position: absolute;">
+                <div class="sizer">
+                    <div class="titlePane" style="-webkit-user-select: none;">
+                        <div class="spinner hidden" title="正在搜索...">
+                        </div>
+                        <div class="title">
+                        </div>
+                        <div class="titleButton prev hidden" title="上一个要素">
+                        </div>
+                        <div class="titleButton next hidden" title="下一个要素">
+                        </div>
+                        <div class="titleButton maximize" title="最大化">
+                        </div>
+                        <div class="titleButton close" title="关闭">
+                        </div>
+                    </div>
+                </div>
+                <div class="sizer content">
+                    <div class="contentPane">
+                    </div>
+                </div>
+                <div class="sizer">
+                    <div class="actionsPane">
+                        <div class="actionList hidden">
+                            <a title="缩放至" class="action zoomTo" href="javascript:void(0);">
+                <span>
+                  缩放至
+                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="pointer hidden">
+                </div>
+            </div>
+            <div class="outerPointer hidden">
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#西二旗').mouseenter(function () {
+            $('#L1306').css("z-index", 5).css("opacity",1);
+            $('#L1306').mouseenter(function(){
+                console.log('ok');
+                $('#L1306').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L1306').mouseleave(function(){
+            $('#L1306').css("z-index", -1).css("opacity",0);
+        });
+        $("#西二旗").mouseleave(function(){
+            $('#L1306').css("z-index", -1).css("opacity",0);
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+luxue_web:
+    resource: "@LuxueWebBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
