@@ -1,5 +1,5 @@
 <?php
-
+//dev版本的入口文件
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
 

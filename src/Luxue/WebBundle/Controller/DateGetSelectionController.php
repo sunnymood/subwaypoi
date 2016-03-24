@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class DateGetSelectionController
  * @package Luxue\WebBundle\Controller
- * @Route("/index")
+ * @Route("/dataget")
  */
 class DateGetSelectionController extends Controller
 {
@@ -48,8 +48,6 @@ class DateGetSelectionController extends Controller
      * @Route("/getStations/{linesname}")
      */
     public function getStationsAction($linesname){
-
-
 
         $em = $this->getDoctrine()->getEntityManager();
         $subwayline = $em->getRepository('LuxueWebBundle:SubwayLine')->findOneBy(array('linename'=>$linesname));

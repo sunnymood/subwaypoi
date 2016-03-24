@@ -3,6 +3,10 @@
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
+/*
+ * Appkernel类的主要功能是初始化整个web应用的Bundle。我们要用的Bundle都必须在AppKernel类里面注册
+ */
+
 class AppKernel extends Kernel
 {
     public function registerBundles()

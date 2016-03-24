@@ -95,8 +95,18 @@ class DefaultController extends Controller
         return array('content' => $content,'form'=>$form->createView());
     }
 
+
     /**
      *@Route("/index")
+     *@Template("@LuxueWeb/layout.html.twig")
+     */
+    public function defaultAction(){
+
+        return $this->render('@LuxueWeb/layout.html.twig',array());
+    }
+
+    /**
+     *@Route("/dataget")
      *@Template()
      */
     public function dataGetAction(){
