@@ -1,5 +1,6 @@
 {% extends '@LuxueWeb/layout.html.twig' %}
-
+{% block private_css %}
+{% endblock %}
 {% block nav %}
 <li><a href="{{ url('luxue_web_default_dataget') }}">数据采集</a></li>
 <li class="active"><a href="{{ url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
@@ -10,5 +11,11 @@
 {% block main_form %}
 {% endblock %}
 
+{% block table_display %}
+    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px;margin-top: 30px" onclick="">数据展示</button>
+{% endblock %}
 {% block map_display_js %}
+{% endblock %}
+
+{% block layout_slogan %}
 {% endblock %}

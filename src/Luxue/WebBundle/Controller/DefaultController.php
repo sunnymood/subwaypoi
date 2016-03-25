@@ -26,9 +26,9 @@ class DefaultController extends Controller
 
     /**
      * @Route("/main")
-     * @Template()
+     * @Template("@LuxueWeb/Default/main.html.twig")
      */
-    public function indexAction(Request $request)
+    public function mainAction(Request $request)
     {
         /*$user = new User();
         $user->setAge(19);

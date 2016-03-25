@@ -1,6 +1,167 @@
 {% extends '@LuxueWeb/layout.html.twig' %}
 
+{% block private_css %}
+{% endblock %}
+{% block main_form %}
+
+    <div class="row form-inline">
+        <div class=" col-lg-2 form-group">
+            <label for="subwayline">线路</label>
+            <select class="form-control" id="subwayline" onchange="getStations()">
+                <option value="">--请选择--</option>
+            </select>
+        </div>
+        <div class="col-lg-2 form-group">
+            <label for="station">站名</label>
+            <select class="form-control" id="station" >
+                <option value="">--请选择--</option>
+            </select>
+        </div>
+        <div class="col-lg-2 form-group">
+            <label for="poi">POI</label>
+            <select class="form-control" id="poi">
+                <option>--请选择--</option>
+                <option>小区</option>
+                <option>旅游景点</option>
+                <option>写字楼</option>
+                <option>政府机构</option>
+                <option>购物中心</option>
+                <option>学校</option>
+                <option>医院</option>
+            </select>
+        </div>
+        <div id="form-btn">
+            <button  class=" btn btn-default btn-primary" style="margin-right: 40px" onclick="data_get()">百度地图数据获取</button>
+            <button  class=" btn btn-default btn-primary" style="margin-right: 40px" onclick="data_get()">地铁官网数据获取</button>
+            <button  class=" btn btn-default btn-primary" style="margin-right: 40px" onclick="data_get()">客流调查数据获取</button>
+
+        </div>
+    </div>
+{% endblock %}
+{% block nav %}
+    <li class="active"><a href="{{ url('luxue_web_default_dataget')}}">数据获取</a></li>
+    <li><a href="{{url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
+    <li><a href="{{url('luxue_web_default_dataview')}}">结果可视化</a></li>
+    <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
+{% endblock %}
+ {% block map_display_js %}
+     <div  id="allmap" ></div>
+     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=zhBo0S6b0PhKyhIKsKcoshe0"></script>
+     <script type="text/javascript">
+
+
+         function init(){
+             console.log("init!");
+             var map = new BMap.Map("allmap"); // 创建Map实例
+             var lng,lat,radius,POI;
+             lng = 116.404;
+             lat = 39.915;
+             radius = 1000;
+             POI = '小区';
+
+
+             var mPoint = new BMap.Point(lng,lat);//设置中心点坐标
+             map.enableScrollWheelZoom();
+             map.centerAndZoom(mPoint,15);
+
+             var circle = new BMap.Circle(mPoint,radius,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+             map.addOverlay(circle);
+             var local =  new BMap.LocalSearch(map, {renderOptions: {map: map, autoViewport: false}});
+             local.searchNearby(POI,mPoint,radius);
+         }
+
+         init();
+
+
+         function data_get(){
+             console.log("baidu map start!");
+             var stationname = $('#station').val().trim();
+
+             $.get("/dataget/"+stationname,function(data){
+
+                 var stationinfo = JSON.parse(data);
+                 console.log(stationinfo);
+
+                 var lng,lat,radius,POI;
+                 lng = stationinfo.Lng;
+                 lat = stationinfo.Lat;
+                 radius = stationinfo.Radius;
+                 POI = $('#poi').val().trim();
+
+                 var map = new BMap.Map("allmap"); // 创建Map实例
+                 var mPoint = new BMap.Point(lng,lat);//设置中心点坐标
+                 map.enableScrollWheelZoom();
+                 map.centerAndZoom(mPoint,15);
+
+                 var circle = new BMap.Circle(mPoint,radius,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+                 map.addOverlay(circle);
+                 var local =  new BMap.LocalSearch(map, {renderOptions: {map: map, autoViewport: false}});
+                 local.searchNearby(POI,mPoint,radius);
+
+             });
+
+         }
+
+
+         //操作数据库实现菜单联动
+
+
+         $.get("/dataget/getSubwayLines", function(data){
+
+             console.log(data);
+             var lines=JSON.parse(data);//解析json字符串，得到lines对象
+             console.log(lines);
+             /*json.forEach(function(d,i)
+              {
+              $("#subwayline").append("<option>"+d+"</option>");
+
+              });*/
+             for( var key in lines)//循环取出lines对象的所有属性对应的属性值
+             {
+                 //console.log(json[key]);
+                 $("#subwayline").append("<option>"+lines[key]+"</option>");
+             }
+         });
+
+
+         function getStations(){
+             var linesname = $('#subwayline').val().trim();
+             console.log(linesname);
+             if(linesname=="")
+             {
+                 $("#station").empty().append("<option value=''>--请选择--</option>");
+             }
+             else
+             {
+                 $.get("/dataget/getStations"+"/"+linesname, function(data){
+
+                     console.log(data);
+                     var json=JSON.parse(data);
+                     console.log(json);
+                     $("#station").empty().append("<option value=''>--请选择--</option>");
+                     /*json.forEach(function(d,i)
+                      {
+                      $("#station").append("<option>"+d+"</option>");
+
+                      });*/
+                     for( var key in json)//循环取出lines对象的所有属性对应的属性值
+                     {
+                         //console.log(json[key]);
+                         $("#station").append("<option>"+json[key]+"</option>");
+                     }
+
+                 });
+
+             }
+
+         }
+     </script>
+ {% endblock %}
 {% block table_display %}
-{% endblock table_display %}
+    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px;margin-top: 30px" onclick="">数据展示</button>
+{% endblock %}
+
+{% block layout_slogan %}
+{% endblock %}
 
 

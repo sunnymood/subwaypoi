@@ -1,0 +1,10 @@
+body {
+    background-image: url("../images/layoutbackground.jpg");
+}
+.center-word {
+    padding-right: 540px;
+    padding-top: 220px;
+}
+.center-word >h1,h3{
+    color:#ffffff;
+}
