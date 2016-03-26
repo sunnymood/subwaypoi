@@ -91,7 +91,6 @@
     {% block private_css %}
     {% endblock %}
     {% block public_js %}
-
         <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/jquery-1.11.2.min.js') }}"></script>
     {% endblock %}
@@ -1944,6 +1943,11 @@
         </div>
     </div>
 </div>
+
+    {% block cluster_link %}
+        <button type="button" class="col-lg-1 btn btn-primary">开始聚类</button>
+    {% endblock %}
+
 </div>
 
 <script type="text/javascript">
