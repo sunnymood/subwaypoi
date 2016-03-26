@@ -1,7 +1,5 @@
-{% extends '@LuxueWeb/layout.html.twig' %}
+{% extends '@LuxueWeb/Default/dataView.html.twig' %}
 
-{% block private_css %}
-{% endblock %}
 {% block nav %}
     <li><a href="{{ url('luxue_web_default_dataget') }}">数据采集</a></li>
     <li><a href="{{ url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
@@ -9,12 +7,10 @@
     <li class="active"><a href="{{ url('luxue_web_default_datapredict') }}">规划预测</a></li>
 {% endblock %}
 
-{% block main_form %}
+{% block cluster_link %}
+    <button type="button" class="col-lg-2 btn btn-primary" onclick="">添加线路</button>
 {% endblock %}
 
-{% block map_display_js %}
-{% endblock %}
 
-{% block layout_slogan %}
 
-{% endblock %}
+

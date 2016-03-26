@@ -4,6 +4,7 @@
     <title>北京地铁</title>
     <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
 
+    <!--  内嵌型css style 会影响phpstorm对bootstrap css样式的提示。最好采用link外联css style
     <style>
         html, body, #map{
             height: 100%;
@@ -74,6 +75,8 @@
          list-style-type: none;
                 }*/
     </style>
+    //-->
+    {#内嵌型css style 会影响phpstorm对bootstrap css样式的提示。最好采用link外联css style#}
 
     <script src="http://js.arcgis.com/3.14/init.js"></script>
     <script src="{{ asset('bundles/luxueweb/js/vendor/bj_sub_data.js') }}"></script>
@@ -89,6 +92,7 @@
         <link href="{{ asset('bundles/luxueweb/css/bodystyle.css') }}" rel="stylesheet">
     {% endblock %}
     {% block private_css %}
+        <link href="{{ asset('bundles/luxueweb/css/dataview-own.css') }}" rel="stylesheet">
     {% endblock %}
     {% block public_js %}
         <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap.min.js') }}"></script>
@@ -1945,7 +1949,7 @@
 </div>
 
     {% block cluster_link %}
-        <button type="button" class="col-lg-1 btn btn-primary">开始聚类</button>
+        <h3 class="text-right"><a href="{{ url('luxue_web_default_clusterresult') }}" class="btn btn-lg btn-primary">开始聚类</a></h3>
     {% endblock %}
 
 </div>

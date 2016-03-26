@@ -1,0 +1,68 @@
+ #map{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+.stat-name-box{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 10;
+    border: rgb(139, 164, 220) 1px solid;
+    width: auto;
+    height: auto;
+    font:normal 11px "宋体",Arial;
+    color: rgb(0, 0, 0);
+    background: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.34902) 2px 2px 3px;
+    border-radius: 3px;
+    padding: 3px 5px;
+}
+.legend-box{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    border: rgb(139, 164, 220) 1px solid;
+    width: 130px;
+    height: auto;
+    color: rgb(0, 0, 0);
+    background: rgb(255, 255, 255);
+    box-shadow: rgba(0, 0, 0, 0.34902) 2px 2px 3px;
+    border-radius: 3px;
+}
+tr{
+    padding: 2px 8px;
+}
+.tr-title{
+    text-align: center;
+    font:bold 13px "宋体",Arial;
+    padding: 3px 0px;
+    background: rgb(139, 164, 220);
+    color: #ffffff;
+    border-radius: 3px;
+}
+.tr-title:hover{
+    cursor: pointer;
+}
+.legend-item-color{
+    width: 10px;
+    height: 10px;
+    float: left;
+    background: rgb(139, 164, 220);
+    margin-top: 5px;
+}
+.legend-item-text{
+    font:normal 8px "宋体",Arial;
+    padding: 3px 5px;
+    float: left;
+}
+
+ul.labelbox-ul  {
+    padding-left: 20px;
+}
+/*
+ ul.labelbox-ul li{
+ list-style-type: none;
+        }*/

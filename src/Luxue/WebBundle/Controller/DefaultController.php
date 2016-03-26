@@ -140,6 +140,13 @@ class DefaultController extends Controller
     }
 
 
+    /**
+     * @Route("/clusterresult")
+     * @Template()
+     */
+    public function clusterResultAction(){
+        return $this->render('@LuxueWeb/Default/clusterResult.html.twig',array());
+    }
 }
 
 
