@@ -161,6 +161,22 @@
                 </ul>
             </ul>
         </div>
+            <div class="labelbox" id="L1005"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:90px;left: 440px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：知春路</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁10号线</li>
+                            <li>北京地铁13号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">分析结果：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">客流吸引级别 3</li>
+                        <li><a href="{{ url('luxue_web_dataview_imagedisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
             <div id="map_layers" class="layersDiv" style="">
                 <div id="map_tiled" style="position: absolute; width: 1440px; height: 635px; overflow: visible; -webkit-transform: translate(0px, 0px);">
                     <div style="position: absolute; width: 1440px; height: 635px; overflow: visible; -webkit-transition: -webkit-transform 500ms ease; transition: -webkit-transform 500ms ease;">
@@ -784,7 +800,7 @@
                                y="404" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                         </image>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image  fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
                                y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -852,7 +868,7 @@
                                 stroke-miterlimit="4" cx="566" cy="362" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="知春路" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
                                y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -1969,6 +1985,23 @@
         });
         $("#西二旗").mouseleave(function(){
             $('#L1306').css("z-index", -1).css("opacity",0);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#知春路').mouseenter(function () {
+            $('#L1005').css("z-index", 5).css("opacity",1);
+            $('#L1005').mouseenter(function(){
+                console.log('ok');
+                $('#L1005').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L1005').mouseleave(function(){
+            $('#L1005').css("z-index", -1).css("opacity",0);
+        });
+        $("#知春路").mouseleave(function(){
+            $('#L1005').css("z-index", -1).css("opacity",0);
         });
     });
 </script>
