@@ -1,6 +1,10 @@
 {% extends '@LuxueWeb/layout.html.twig' %}
 
 {% block private_css %}
+    <link href="{{ asset('bundles/luxueweb/css/bootstrap-table.css') }}" rel="stylesheet">
+{% endblock %}
+{% block private_js %}
+    <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap-table.js') }}"></script>
 {% endblock %}
 {% block main_form %}
 
@@ -45,7 +49,7 @@
     <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
 {% endblock %}
  {% block map_display_js %}
-     <div  id="allmap" ></div>
+     <div  id="allmap" style="margin-bottom: 20px"></div>
      <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=zhBo0S6b0PhKyhIKsKcoshe0"></script>
      <script type="text/javascript">
 
@@ -158,40 +162,77 @@
      </script>
  {% endblock %}
 {% block table_display %}
-    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px;margin-top: 30px" onclick="">数据展示</button>
-    <table class="table">
-        <thead class="thead-inverse">
+    <div id="button-datademo" style="height: 40px">
+    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px" onclick="">数据展示</button>
+    </div>
+
+    <table id="eventsTable"
+           data-toggle="table"
+           data-height="500"
+           data-url="https://api.github.com/users/wenzhixin/repos?type=owner&sort=full_name&direction=asc&per_page=100&page=1"
+           data-pagination="true"
+           data-search="true"
+           data-show-refresh="true"
+           data-show-toggle="true"
+           data-show-columns="true"
+           data-toolbar="#toolbar"
+           style="margin-top: 50px">
+        <thead>
         <tr>
-            <th>#</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
+            <th data-field="state" data-checkbox="true"></th>
+            <th data-field="name">Name</th>
+            <th data-field="stargazers_count">Stars</th>
+            <th data-field="forks_count">Forks</th>
+            <th data-field="description">Description</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-        </tr>
-        </tbody>
     </table>
 
+    <script type="text/javascript">
+        /*$(function () {
+            var $result = $('#eventsResult');
 
-
+            $('#eventsTable').on('all.bs.table', function (e, name, args) {
+                        console.log('Event:', name, ', data:', args);
+                    })
+                    .on('click-row.bs.table', function (e, row, $element) {
+                        $result.text('Event: click-row.bs.table');
+                    })
+                    .on('dbl-click-row.bs.table', function (e, row, $element) {
+                        $result.text('Event: dbl-click-row.bs.table');
+                    })
+                    .on('sort.bs.table', function (e, name, order) {
+                        $result.text('Event: sort.bs.table');
+                    })
+                    .on('check.bs.table', function (e, row) {
+                        $result.text('Event: check.bs.table');
+                    })
+                    .on('uncheck.bs.table', function (e, row) {
+                        $result.text('Event: uncheck.bs.table');
+                    })
+                    .on('check-all.bs.table', function (e) {
+                        $result.text('Event: check-all.bs.table');
+                    })
+                    .on('uncheck-all.bs.table', function (e) {
+                        $result.text('Event: uncheck-all.bs.table');
+                    })
+                    .on('load-success.bs.table', function (e, data) {
+                        $result.text('Event: load-success.bs.table');
+                    })
+                    .on('load-error.bs.table', function (e, status) {
+                        $result.text('Event: load-error.bs.table');
+                    })
+                    .on('column-switch.bs.table', function (e, field, checked) {
+                        $result.text('Event: column-switch.bs.table');
+                    })
+                    .on('page-change.bs.table', function (e, number, size) {
+                        $result.text('Event: page-change.bs.table');
+                    })
+                    .on('search.bs.table', function (e, text) {
+                        $result.text('Event: search.bs.table');
+                    });
+        });*/
+    </script>
 {% endblock %}
 
 {% block layout_slogan %}

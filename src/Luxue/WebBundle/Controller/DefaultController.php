@@ -16,7 +16,7 @@ class DefaultController extends Controller
 {
     /**
      * @Route("/book/show/{id}")
-     * @ParamConverter("bookbook",class="LuxueWebBundle:Book")   ��id��Ӧ��Ϊclass����ָ��entity Book��id��������Book���е�
+     * @ParamConverter("bookbook",class="LuxueWebBundle:Book")
      */
     public function showBookAction(Book $book){
 

@@ -11,8 +11,8 @@
     {% block title %}<title>换乘车站调查</title>{% endblock %}
 
     {% block public_css %}
-        <!-- Bootstrap core CSS -->
-        <link href="{{ asset('bundles/luxueweb/css/bootstrap.min.css') }}" rel="stylesheet">
+        <!-- Bootstrap core CSS 开发环境下，用bootstrap.css,不要用bootstrap.min.css -->
+        <link href="{{ asset('bundles/luxueweb/css/bootstrap.css') }}" rel="stylesheet">
 
         <!-- Custom styles for this template -->
         <link href="{{ asset('bundles/luxueweb/css/bodystyle.css')}}" rel="stylesheet">
@@ -23,8 +23,10 @@
     {% endblock %}
 
     {% block public_js %}
-        <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap.min.js') }}"></script>
+        <!-- jquery在前，bootstrap在后，因为bootstrap要用到jquery-->
         <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/jquery-1.11.2.min.js') }}"></script>
+
+        <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap.min.js') }}"></script>
     {% endblock %}
 
     {% block private_js %}
