@@ -48,7 +48,6 @@ class DateGetSelectionController extends Controller
      * @Route("/getStations/{linesname}")
      */
     public function getStationsAction($linesname){
-
         $em = $this->getDoctrine()->getEntityManager();
         $subwayline = $em->getRepository('LuxueWebBundle:SubwayLine')->findOneBy(array('linename'=>$linesname));
         $stations = $subwayline->getStations();//获得SubwayCoordinate 对象数组
@@ -58,7 +57,6 @@ class DateGetSelectionController extends Controller
         };
 
         return new Response(json_encode($subwaystationlist));
-
     }
 
     /**
@@ -74,7 +72,6 @@ class DateGetSelectionController extends Controller
         $stationcoordinate['Lat'] = $result->getLocationLat();
         $stationcoordinate['Radius'] = $result->getInfluenceRadius();
 
-
         return new Response(json_encode($stationcoordinate));
     }
 
@@ -85,7 +82,6 @@ class DateGetSelectionController extends Controller
 
         $linesname = 'L01';
         $em = $this->getDoctrine()->getEntityManager();//若要使用createQueryBuilder() $em 必须要通过getEntityManager(),getManager()不行
-
         $qb = $em->createQueryBuilder();
         $qb->select('subwayLine')
             ->from('LuxueWebBundle:SubwayLine','subwayLine')
@@ -102,14 +98,16 @@ class DateGetSelectionController extends Controller
         foreach($stats as $stat){
             echo $stat->getName().$stat->getLocationLat().$stat->getLocationLng();
         }
-
-
     }
 
-
-    public function serviceTestAction()
-    {
-
+    /**
+     * @Route("stationTable")
+     */
+    public function stationTableAction(){
+        //__DIR__为当前脚本所在目录的绝对路径，末尾没有'\'。不管是include once 还是fopen、file_get_contents
+        //最好都使用__DIR__加上".\"(当前目录)、"..\"(上一级目录) 将路径参数转化为绝对路径
+        $stationtable_json_string = file_get_contents(__DIR__.'\..\Pythonscript\transferpoi.json');
+//        var_dump($stationtable_json_string);
+        return new Response($stationtable_json_string);//直接返回一个response，内容为一个字符串
     }
-
 }

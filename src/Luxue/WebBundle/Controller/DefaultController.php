@@ -85,9 +85,6 @@ class DefaultController extends Controller
         }
 
         //$form = $this->createForm('text');
-
-
-
         $content = "I'm so happy";
 
         $this->get('luxue_web.printa')->printA();//先于index.html.twig 打印出来
@@ -95,14 +92,13 @@ class DefaultController extends Controller
         return array('content' => $content,'form'=>$form->createView());
     }
 
-
     /**
      *@Route("/index")
      *@Template("@LuxueWeb/layout.html.twig")
      */
     public function defaultAction(){
-
         return $this->render('@LuxueWeb/layout.html.twig',array());
+
     }
 
     /**
@@ -110,7 +106,6 @@ class DefaultController extends Controller
      *@Template()
      */
     public function dataGetAction(){
-
         return $this->render('@LuxueWeb/Default/dataGet.html.twig',array());
     }
 
@@ -119,7 +114,6 @@ class DefaultController extends Controller
      *@Template()
      */
     public function dataAnalysisAction(){
-
         return $this->render('@LuxueWeb/Default/dataAnalysis.html.twig',array());
     }
 

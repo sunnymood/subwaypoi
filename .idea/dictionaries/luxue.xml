@@ -16,10 +16,12 @@
       <w>luxue</w>
       <w>mastfoot</w>
       <w>officebuilding</w>
+      <w>pythonscript</w>
       <w>shoppingmall</w>
       <w>stationcoordinate</w>
       <w>stationinfo</w>
       <w>stationname</w>
+      <w>stationtable</w>
       <w>subwaycoordinate</w>
       <w>subwayline</w>
       <w>subwaylines</w>
@@ -28,6 +30,7 @@
       <w>subwaypoi</w>
       <w>subwaystationlist</w>
       <w>subwaystationname</w>
+      <w>transferpoi</w>
     </words>
   </dictionary>
 </component>
