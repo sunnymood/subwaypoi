@@ -12,6 +12,7 @@
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/public/images/layoutbackground.jpg" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/public/images/xierqi.jpg" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/public/js/vendor/bootstrap-table.js" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/public/js/vendor/echarts.min.js" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/views/Default/index.html.twig" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/views/layout.html.twig" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web/bundles/luxueweb/images/background.jpg" charset="GBK" />

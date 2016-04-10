@@ -4,23 +4,225 @@
 {% endblock %}
 
 {% block private_js %}
+    <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/echarts.min.js') }}"></script>
 {% endblock %}
 
 {% block nav %}
-<li><a href="{{ url('luxue_web_default_dataget') }}">数据采集</a></li>
-<li class="active"><a href="{{ url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
-<li><a href="{{ url('luxue_web_default_dataview') }}">结果可视化</a></li>
-<li><a href="{{ url('luxue_web_default_datapredict') }}">规划预测</a></li>
+    <li><a href="{{ url('luxue_web_default_dataget') }}">数据采集</a></li>
+    <li class="active"><a href="{{ url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
+    <li><a href="{{ url('luxue_web_default_dataview') }}">结果可视化</a></li>
+    <li><a href="{{ url('luxue_web_default_datapredict') }}">规划预测</a></li>
 {% endblock %}
 
 {% block main_form %}
 {% endblock %}
 
 {% block table_display %}
-    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px;margin-top: 30px" onclick="">数据展示</button>
+    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px;margin-top: 30px"
+            onclick="">数据展示
+    </button>
 {% endblock %}
 
 {% block map_display_js %}
+{% endblock %}
+
+{% block echarts_display_radar %}
+    <div id="main" style="width: 1140px;height:600px;"></div>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        option = {
+            title: {
+                text: '换乘站各项信息对比',//
+                subtext: '北京地铁',
+                x: 'right',
+                y: 'bottom'
+            },
+            tooltip: {
+                trigger: 'item',
+                backgroundColor: 'rgba(0,0,250,0.2)'
+            },
+            legend: {   //有什么作用？
+                data: ['L0112-军事博物馆',"L0112-复兴门","L0113-西单","L0117-东单","L0118-建国门","L0120-国贸","L0122-四惠",
+                    "L0203-车公庄","L0204-西直门","L0206-鼓楼大街"]
+            },
+            visualMap: {
+                color: ['red', 'yellow']
+            },
+            radar: {
+                indicator: [
+                    {text: '公交车站', max: 450},
+                    {text: '政府机关', max: 1000},
+                    {text: '生活小区', max: 1500},
+                    {text: '旅游景点', max: 300},
+                    {text: '写字楼', max: 250},
+                    {text: '商场', max: 50},
+                    {text: '医院', max: 200},
+                    {text: '学校', max: 500},
+                    {text: '节点度数', max: 50000}
+                ]
+            },
+            series: [
+                {
+                    name: '北京地铁',
+                    type: 'radar',
+                    symbol: 'none',
+                    itemStyle: {
+                        normal: {
+                            lineStyle: {
+                                width: 1
+                            }
+                        },
+                        emphasis: {
+                            areaStyle: {color: 'rgba(0,250,0,0.3)'}
+                        }
+                    },
+                    data: []
+                },
+                {
+                    name: '北京地铁',
+                    type: 'radar',
+                    symbol: 'none',
+                    itemStyle: {
+                        normal: {
+                            lineStyle: {
+                                width: 1
+                            }
+                        },
+                        emphasis: {
+                            areaStyle: {color: 'rgba(0,250,250,1)'}
+                        }
+                    },
+                    data: []
+                },
+                {
+                    name: '北京地铁',
+                    type: 'radar',
+                    symbol: 'none',
+                    itemStyle: {
+                        normal: {
+                            lineStyle: {
+                                width: 1
+                            }
+                        },
+                        emphasis: {
+                            areaStyle: {color: 'rgba(0,250,0,0.3)'}
+                        }
+                    },
+                    data: []
+                }
+
+            ]
+        };
+
+        //填充数据项，可以通过ajax访问服务器上的数据，但要将服务器端传回的数据格式与data相匹配。
+        option.series[0].data = [
+//            {
+//                value: [
+//                    206, 892, 1043.5, 269.5, 191.5, 21, 190.5, 242.5, 25662
+//
+//                ],
+//                name: "L0108-公主坟"
+//            },
+            {
+                value: [
+                    34, 126, 119, 10.5, 16.5, 15, 31.5, 28.5, 35737
+
+
+                ],
+                name: "L0112-军事博物馆"
+            },
+            {
+                value: [
+                    69, 154.5, 123.5, 14.5, 66, 4.5, 29, 29.5, 41092
+                ],
+                name: "L0112-复兴门"
+            },
+            {
+                value: [
+                    68.5, 137.5, 97, 61.5, 15.5, 8.5, 16, 29, 33526
+
+
+                ],
+                name: "L0113-西单"
+            },
+            {
+                value: [
+                    30.5, 97.5, 34.5, 23, 31, 10, 10.5, 13, 43638
+
+
+                ],
+                name: "L0117-东单"
+            },
+            {
+                value: [
+                    32.5, 48, 106, 10, 22.5, 2.5, 2.5, 11, 49358
+
+
+                ],
+                name: "L0118-建国门"
+            },
+            {
+                value: [
+                    113.5, 262.5, 1206, 37, 137, 17, 97.5, 91.5, 38718
+
+
+                ],
+                name: "L0120-国贸"
+            }
+
+        ];
+        option.series[1].data = [
+//
+            {
+                value: [
+                    117, 212.5, 658, 78.5, 102, 24.5, 77, 189, 15712
+
+
+                ],
+                name: "L0122-四惠"
+            },
+            {
+                value: [
+                    89.5, 16, 529, 63.5, 36, 14.5, 52.5, 174, 6120
+
+
+                ],
+                name: "L0123-四惠东"
+            },
+            {
+                value: [
+                    41, 135, 145, 13, 62.5, 2.5, 29.5, 50, 40904
+
+
+                ],
+                name: "L0203-车公庄"
+            },
+            {
+                value: [
+                    61, 206.5, 308.5, 71, 63.5, 7.5, 55.5, 117.5, 47676
+
+
+                ],
+                name: "L0204-西直门"
+            },
+            {
+                value: [
+                    45.5, 183.5, 152, 54, 25.5, 1, 30, 44, 38448
+
+
+                ],
+                name: "L0206-鼓楼大街"
+            }
+
+        ];
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
 {% endblock %}
 
 {% block layout_slogan %}

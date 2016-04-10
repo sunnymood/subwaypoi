@@ -34,7 +34,6 @@
 </head>
 
 <body>
-    {% block main_container %}
     <div class="container">
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
@@ -81,8 +80,6 @@
         {% endblock %}
 
         {% block main_form %}
-
-
         {% endblock %}
 
         {% block map_display_js %}
@@ -90,8 +87,16 @@
 
         {% block table_display %}
         {% endblock %}
+
+        {% block echarts_display_radar %}
+        {% endblock %}
+
+        {% block echarts_display_2 %}
+        {% endblock %}
+
+        {% block echarts_display_3 %}
+        {% endblock %}
     </div>
-    {% endblock %}
 
 
 

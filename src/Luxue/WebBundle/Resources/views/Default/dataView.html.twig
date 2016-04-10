@@ -111,7 +111,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" style="font-size: large" href="">地铁换乘站数据分析与预测系统</a>
+            <a class="navbar-brand" style="font-size: large" href="{{ url('luxue_web_default_default') }}">地铁换乘站数据分析与预测系统</a>
         </div>
         <!--end navbar-header-->
         <div id="navbar" class="navbar-collapse collapse">
@@ -141,8 +141,12 @@
             </ul>
         </nav>
 </div>
+    {% block addlines_area %}
 
-<div id="map" style="margin-left: auto;margin-right: auto" class="map" data-zoom="0" data-scale="18489297.737236" data-loaded="">
+    {% endblock %}
+
+    {% block subwaymap %}
+    <div id="map" style="margin-left: auto;margin-right: auto" class="map" data-zoom="0" data-scale="18489297.737236" data-loaded="">
     <div id="map_root" class="container" style="width: 100%; height: 100%; direction: ltr;">
         <div id="map_container" class="container" style="position: absolute; cursor: default; clip: auto;">
         <div class="labelbox" id="L1306"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:20px;left: 440px;background-color:#e5e5e5">
@@ -1963,6 +1967,13 @@
         </div>
     </div>
 </div>
+    {% endblock %}
+
+    {% block result_table %}
+    {% endblock %}
+
+    {% block echart_display %}
+    {% endblock %}
 
     {% block cluster_link %}
         <h3 class="text-right"><a href="{{ url('luxue_web_default_clusterresult') }}" class="btn btn-lg btn-primary">开始聚类</a></h3>
