@@ -122,7 +122,7 @@
                 <div class="form-group">
                     <input type="password" placeholder="密码" class="form-control">
                 </div>
-                <button type="submit" class="btn btn-primary">登 陆</button>
+                <button type="submit" class="btn btn-primary">登 录</button>
             </form>
         </div><!--/.navbar-collapse -->
     </div>
@@ -136,7 +136,7 @@
                     <li><a href="{{ url('luxue_web_default_dataget')}}">数据获取</a></li>
                     <li><a href="{{url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
                     <li class="active"><a href="{{url('luxue_web_default_dataview')}}">结果可视化</a></li>
-                    <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
+                    <li><a href="{{url('luxue_web_default_datapredict')}}">新线预测</a></li>
                 {% endblock %}
             </ul>
         </nav>
@@ -149,7 +149,7 @@
     <div id="map" style="margin-left: auto;margin-right: auto" class="map" data-zoom="0" data-scale="18489297.737236" data-loaded="">
     <div id="map_root" class="container" style="width: 100%; height: 100%; direction: ltr;">
         <div id="map_container" class="container" style="position: absolute; cursor: default; clip: auto;">
-        <div class="labelbox" id="L1306"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:20px;left: 440px;background-color:#e5e5e5">
+        <div class="labelbox labelbox-L1306" id="L1306"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:20px;left: 440px;background-color:#e5e5e5">
             <ul class="labelbox-ul">
                 <li >车站名称：西二旗</li>
                 <li >所属线路：
@@ -165,7 +165,7 @@
                 </ul>
             </ul>
         </div>
-            <div class="labelbox" id="L1005"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:90px;left: 440px;background-color:#e5e5e5">
+            <div class="labelbox labelbox-L1005" id="L1005"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:90px;left: 440px;background-color:#e5e5e5">
                 <ul class="labelbox-ul">
                     <li >车站名称：知春路</li>
                     <li >所属线路：

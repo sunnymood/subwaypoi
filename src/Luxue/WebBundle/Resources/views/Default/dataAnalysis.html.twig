@@ -8,10 +8,10 @@
 {% endblock %}
 
 {% block nav %}
-    <li><a href="{{ url('luxue_web_default_dataget') }}">数据采集</a></li>
+    <li><a href="{{ url('luxue_web_default_dataget') }}">数据获取</a></li>
     <li class="active"><a href="{{ url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
     <li><a href="{{ url('luxue_web_default_dataview') }}">结果可视化</a></li>
-    <li><a href="{{ url('luxue_web_default_datapredict') }}">规划预测</a></li>
+    <li><a href="{{ url('luxue_web_default_datapredict') }}">新线预测</a></li>
 {% endblock %}
 
 {% block main_form %}
@@ -44,7 +44,7 @@
                 trigger: 'item',
                 backgroundColor: 'rgba(0,0,250,0.2)'
             },
-            legend: {   //有什么作用？
+            legend: {   //有什么作用？与 series.data数组中每一项的name相对应
                 data: ['L0112-军事博物馆',"L0112-复兴门","L0113-西单","L0117-东单","L0118-建国门","L0120-国贸","L0122-四惠",
                     "L0203-车公庄","L0204-西直门","L0206-鼓楼大街"]
             },
