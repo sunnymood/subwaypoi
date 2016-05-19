@@ -15,7 +15,10 @@
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/public/js/vendor/echarts.min.js" charset="GBK" />
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/views/Default/index.html.twig" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Resources/views/layout.html.twig" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Service/POI.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Service/getPOI.php" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/Luxue/WebBundle/Service/getsubwayposition.php" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/web/bundles/luxueweb/images/background.jpg" charset="GBK" />
-    <file url="PROJECT" charset="GBK" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>
