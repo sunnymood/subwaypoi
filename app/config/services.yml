@@ -1,3 +1,13 @@
+
+#app下的services用来配置整个app下的我自己的所有services。
+#相当于app下的services.yml就是一个  每一个自己的bundle下的services.yml的一个整合体。
+#即两种配置services的方法：
+#1.所有的services全都在app下配置，不分哪一个bundle提供的services。然后被import在整个app的config.yml中。
+#2.所有的services分别在自己建的对应bundle下配置，跳过app下的services.yml，
+#直接将多个bundle下的services.yml被import在整个app的config.yml中。
+
+
+
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
 parameters:

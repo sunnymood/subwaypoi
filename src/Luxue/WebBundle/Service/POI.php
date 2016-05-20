@@ -5,6 +5,7 @@
  * Date: 2015/6/24
  * Time: 14:33
  */
+namespace Luxue\WebBundle\Service;
 
 class POI
 {

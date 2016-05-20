@@ -1,0 +1,24 @@
+
+
+
+#我的app下的每一个自己建的xxxbundle中，
+#通过在“xxxBundle\Resources\config\services.yml”中配置这个xxxbundle本身所提供的services。
+
+parameters:
+  luxue.poi.place:  beijing
+
+
+
+services:
+#    luxue.web.example:
+#        class:     Luxue\WebBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
+#        calls:
+#            - [setService, ["@service_id"]]
+#        tags:
+#            - { name: twig.extension }
+#            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+    luxue.poi:
+        class:  Luxue\WebBundle\Service\POI
+        arguments:  ['%luxue.poi.place%']

@@ -1,7 +1,18 @@
+
+
+
+
+#app下的config.yml是管理整个应用程序所用到的所有bundle的配置。
+#包括symfony2内置的bundle、第三方bundle、我的app中我自己建立的所有bundle
+
+#而我自己建的所有bundle，他们每一个bundle本身里都有自己对应的services.yml，来配置自己的services.
+#所以在app里要把所有这些我自己bundle里的services.yml都import进来，才能正常供整个app使用。
+
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
+    - { resource: '@LuxueWebBundle/Resources/config/services.yml'}
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
