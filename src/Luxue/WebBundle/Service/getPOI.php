@@ -6,7 +6,7 @@
  * Time: 19:38
  */
 
-include_once('./POI.php');
+use Luxue\WebBundle\Service\POI;
 
 $subwayPOI = new POI();
 $subwaystationinfo = $subwayPOI->getSubwayCoordinate();

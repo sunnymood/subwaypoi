@@ -85,11 +85,11 @@ class DefaultController extends Controller
         }
 
         //$form = $this->createForm('text');
-        $content = "I'm so happy";
+       /* $content = "I'm so happy";
 
         $this->get('luxue_web.printa')->printA();//先于index.html.twig 打印出来
 
-        return array('content' => $content,'form'=>$form->createView());
+        return array('content' => $content,'form'=>$form->createView());*/
     }
 
     /**

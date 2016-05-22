@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @package Luxue\WebBundle\Controller
  * @Route("/dataget")
  */
-class DateGetSelectionController extends Controller
+class DateGetController extends Controller
 {
     /**
      * @Route("/getSubwayLines")
