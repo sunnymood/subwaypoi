@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class DateGetSelectionController
+ * Class DateGetController
  * @package Luxue\WebBundle\Controller
  * @Route("/dataget")
  */
@@ -57,6 +57,19 @@ class DateGetController extends Controller
         };
 
         return new Response(json_encode($subwaystationlist));
+    }
+
+
+    /**
+     * @Route("/getPOI")
+     * @Template()
+     */
+    public function getPOIAction(){
+        $name = 'luxue';
+        $age = 26;
+        $sex = 'man';
+        $data = array('name'=>$name,'age'=>$age,'sex'=>$sex);
+        return $this->render('@LuxueWeb/DateGet/getPOI.html.twig',$data);
     }
 
     /**
@@ -110,4 +123,16 @@ class DateGetController extends Controller
 //        var_dump($stationtable_json_string);
         return new Response($stationtable_json_string);//直接返回一个response，内容为一个字符串
     }
+
+    /**
+     * @Route("normalStationTable")
+     */
+    public function normalStationTableAction(){
+        //__DIR__为当前脚本所在目录的绝对路径，末尾没有'\'。不管是include once 还是fopen、file_get_contents
+        //最好都使用__DIR__加上".\"(当前目录)、"..\"(上一级目录) 将路径参数转化为绝对路径
+        $normalstationtable_json_string = file_get_contents(__DIR__.'\..\Pythonscript\normalpoi.json');
+//        var_dump($stationtable_json_string);
+        return new Response($normalstationtable_json_string);//直接返回一个response，内容为一个字符串
+    }
+
 }

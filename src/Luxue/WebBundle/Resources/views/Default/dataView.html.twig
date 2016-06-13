@@ -2,7 +2,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>北京地铁</title>
-    <link rel="stylesheet" href="http://js.arcgis.com/3.14/esri/css/esri.css">
+    <link rel="stylesheet" href="{{ asset('bundles/luxueweb/css/esri.css') }}">
 
     <!--  内嵌型css style 会影响phpstorm对bootstrap css样式的提示。最好采用link外联css style
     <style>
@@ -78,7 +78,7 @@
     //-->
     {#内嵌型css style 会影响phpstorm对bootstrap css样式的提示。最好采用link外联css style#}
 
-    <script src="http://js.arcgis.com/3.14/init.js"></script>
+    <script src="{{ asset('bundles/luxueweb/js/vendor/init.js') }}"></script>
     <script src="{{ asset('bundles/luxueweb/js/vendor/bj_sub_data.js') }}"></script>
     <script src="{{ asset('bundles/luxueweb/js/vendor/jquery-1.11.2.min.js') }}"></script>
     {% block title %}<title>换乘车站调查</title>{% endblock %}
@@ -87,9 +87,11 @@
         <!-- Bootstrap core CSS -->
         <link href="{{ asset('bundles/luxueweb/css/bootstrap.min.css') }}" rel="stylesheet">
         <link href="{{ asset('bundles/luxueweb/css/bootstrap-glyphicons.css') }}" rel="stylesheet">
+        <link href="{{ asset('bundles/luxueweb/css/bootstrap-table.css') }}" rel="stylesheet">
 
         <!-- Custom styles for this template -->
         <link href="{{ asset('bundles/luxueweb/css/bodystyle.css') }}" rel="stylesheet">
+
     {% endblock %}
     {% block private_css %}
         <link href="{{ asset('bundles/luxueweb/css/dataview-own.css') }}" rel="stylesheet">
@@ -97,6 +99,7 @@
     {% block public_js %}
         <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/jquery-1.11.2.min.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap-table.js') }}"></script>
     {% endblock %}
 </head>
 
@@ -133,7 +136,17 @@
         <nav>
             <ul class="nav nav-justified">
                 {% block nav %}
-                    <li><a href="{{ url('luxue_web_default_dataget')}}">数据获取</a></li>
+                    <li class="dropdown"><a href="{{ url('luxue_web_default_dataget')}}"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据获取<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-header">土地利用数据</li>
+                            <li><a href="{{ url('luxue_web_default_dataget')}}">POI数据</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">规模及连通性数据</li>
+                            <li><a href="#">换乘客流数据</a></li>
+                            <li><a href="#">公交线路数据</a></li>
+                            <li><a href="#">节点介数</a></li>
+                        </ul>
+                    </li>
                     <li><a href="{{url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
                     <li class="active"><a href="{{url('luxue_web_default_dataview')}}">数据可视化</a></li>
                     <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
@@ -149,6 +162,8 @@
     <div id="map" style="margin-left: auto;margin-right: auto" class="map" data-zoom="0" data-scale="18489297.737236" data-loaded="">
     <div id="map_root" class="container" style="width: 100%; height: 100%; direction: ltr;">
         <div id="map_container" class="container" style="position: absolute; cursor: default; clip: auto;">
+
+            <!--开始换乘站标签展示-->
             <div class="labelbox labelbox-L1306" id="L1306"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:20px;left: 440px;background-color:#e5e5e5">
             <ul class="labelbox-ul">
                 <li >车站名称：西二旗</li>
@@ -158,10 +173,10 @@
                         <li>北京地铁13号线</li>
                     </ul>
                 </li>
-                <li style="text-decoration-color: #0000F0">分析结果：</li>
+                <li style="text-decoration-color: #0000F0">所属类别：</li>
                 <ul>
-                <li style="text-decoration-color: #0000F0">客流吸引级别 3</li>
-                <li><a href="{{ url('luxue_web_dataview_imagedisplay')}}" target="_blank">车站详细数据</a></li>
+                <li style="text-decoration-color: #0000F0">中型接驳商务型</li>
+                <li><a href="{{ url('luxue_web_dataview_xeqdisplay')}}" target="_blank">车站详细数据</a></li>
                 </ul>
             </ul>
         </div>
@@ -174,13 +189,116 @@
                             <li>北京地铁13号线</li>
                         </ul>
                     </li>
-                    <li style="text-decoration-color: #0000F0">分析结果：</li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
                     <ul>
-                        <li style="text-decoration-color: #0000F0">客流吸引级别 3</li>
-                        <li><a href="{{ url('luxue_web_dataview_imagedisplay')}}" target="_blank">车站详细数据</a></li>
+                        <li style="text-decoration-color: #0000F0">中型中转居住型</li>
+                        <li><a href="{{ url('luxue_web_dataview_zcldisplay')}}" target="_blank">车站详细数据</a></li>
                     </ul>
                 </ul>
             </div>
+            <div class="labelbox labelbox-L0407" id="L0407"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:90px;left: 372px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：海淀黄庄</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁4号线</li>
+                            <li>北京地铁10号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">中型中转混合型</li>
+                        <li><a href="{{ url('luxue_web_dataview_hdhzdisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
+            <div class="labelbox labelbox-L0204" id="L0204"  style="width: 200px;height: 160px;position: absolute; z-index: -1;opacity:0;top:140px;left: 444px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：西直门</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁2号线</li>
+                            <li>北京地铁4号线</li>
+                            <li>北京地铁13号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">大型中转混合型</li>
+                        <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
+            <div class="labelbox labelbox-L0113" id="L0113"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:224px;left: 478px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：西单</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁1号线</li>
+                            <li>北京地铁4号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">中型中转商务型</li>
+                        <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
+
+            <div class="labelbox labelbox-L0117" id="L0117"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:224px;left: 567px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：东单</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁1号线</li>
+                            <li>北京地铁5号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">中型中转商务型</li>
+                        <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
+
+            <div class="labelbox labelbox-L0217" id="L0217"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:244px;left: 478px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：宣武门</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁2号线</li>
+                            <li>北京地铁4号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">中型中转商务型</li>
+                        <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
+
+            <div class="labelbox labelbox-L0214" id="L0214"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:244px;left: 567px;background-color:#e5e5e5">
+                <ul class="labelbox-ul">
+                    <li >车站名称：崇文门</li>
+                    <li >所属线路：
+                        <ul>
+                            <li>北京地铁2号线</li>
+                            <li>北京地铁5号线</li>
+                        </ul>
+                    </li>
+                    <li style="text-decoration-color: #0000F0">所属类别：</li>
+                    <ul>
+                        <li style="text-decoration-color: #0000F0">中型中转商务型</li>
+                        <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
+                    </ul>
+                </ul>
+            </div>
+            <!--结束换乘站标签展示-->
+
+            <!--开始线网展示-->
             <div id="map_layers" class="layersDiv" style="">
                 <div id="map_tiled" style="position: absolute; width: 1440px; height: 635px; overflow: visible; -webkit-transform: translate(0px, 0px);">
                     <div style="position: absolute; width: 1440px; height: 635px; overflow: visible; -webkit-transition: -webkit-transform 500ms ease; transition: -webkit-transform 500ms ease;">
@@ -188,6 +306,7 @@
                 </div>
                 <svg overflow="hidden" width="1440" height="635" id="map_gc" style="overflow: visible; position: absolute;margin-left:-150px;
   margin-top: 40px;">
+                    <!--开始线路绘制-->
                     <g id="subwayLine_layer" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,25.00000000,-133.00000000)"
                        style="display: block;">
                         <g>
@@ -298,11 +417,14 @@
                               d="M 460 575 451 589 443 602 434 616 426 629 418 642 409 656 401 664 388 668 362 668 325 668 300 668"
                               stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </path>
-                    </g>
+                    </g><!--结束线路绘制-->
+
+                    <!--开始车站绘制-->
                     <g id="subwayStop_layer" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,25.00000000,-133.00000000)"
                        style="display: block;">
                         <g>
                         </g>
+                        <!--circle为普通车站，image为换乘车站，通过(cx,cy)标记线网上的位置-->
                         <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
                                 stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
                                 stroke-miterlimit="4" cx="677" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
@@ -413,13 +535,13 @@
                                 stroke-miterlimit="4" cx="694" cy="440" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="东单" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
                                y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                         </image>
 
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="崇文门" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
                                y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -644,7 +766,7 @@
                                 stroke-miterlimit="4" cx="578" cy="469" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image  fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
                                y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -684,12 +806,12 @@
                                 stroke-miterlimit="4" cx="605" cy="438" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="西单" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
                                y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                         </image>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="宣武门" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
                                y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -808,10 +930,7 @@
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="560"
                                y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
-
-
                         </image>
-
                         <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(6, 150, 203)"
                                 stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
                                 stroke-miterlimit="4" cx="582" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
@@ -862,7 +981,7 @@
                                 stroke-miterlimit="4" cx="770" cy="367" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="西直门" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
                                y="384" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -1082,7 +1201,7 @@
                                 stroke-miterlimit="4" cx="498" cy="305" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image  fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
                                y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -1257,7 +1376,7 @@
                                 stroke-miterlimit="4" cx="473" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
-                        <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                        <image id="海淀黄庄" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
                                y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -1906,6 +2025,7 @@
                                 fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                         </circle>
                     </g>
+                    <!--结束车站绘制-->
                     <g id="subwayLabel_layer" data-hidden="">
                         <g>
                         </g>
@@ -1919,6 +2039,7 @@
                     </g>
                 </svg>
             </div>
+            <!--结束线网展示-->
         </div>
         <div class="esriControlsBR">
       <span class="esriAttribution" style="max-width: 648px; cursor: default;">
@@ -1976,12 +2097,14 @@
     {% endblock %}
 
     {% block cluster_link %}
-        <h3 class="text-right"><a href="{{ url('luxue_web_default_clusterresult') }}" class="btn btn-lg btn-primary">开始聚类</a></h3>
+        <h3 class="text-right"><a href="{{ url('luxue_web_default_clusterresult') }}" class="btn btn-primary">开始聚类</a></h3>
     {% endblock %}
 
 </div>
 
 <script type="text/javascript">
+
+    //鼠标移动到换乘站节点处，显示标签内容
     $(document).ready(function() {
         $('#西二旗').mouseenter(function () {
             $('#L1306').css("z-index", 5).css("opacity",1);
@@ -2015,6 +2138,109 @@
             $('#L1005').css("z-index", -1).css("opacity",0);
         });
     });
+
+    $(document).ready(function() {
+        $('#海淀黄庄').mouseenter(function () {
+            $('#L0407').css("z-index", 5).css("opacity",1);
+            $('#L0407').mouseenter(function(){
+                console.log('ok');
+                $('#L0407').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L0407').mouseleave(function(){
+            $('#L0407').css("z-index", -1).css("opacity",0);
+        });
+        $("#海淀黄庄").mouseleave(function(){
+            $('#L0407').css("z-index", -1).css("opacity",0);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#西直门').mouseenter(function () {
+            $('#L0204').css("z-index", 5).css("opacity",1);
+            $('#L0204').mouseenter(function(){
+                console.log('ok');
+                $('#L0204').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L0204').mouseleave(function(){
+            $('#L0204').css("z-index", -1).css("opacity",0);
+        });
+        $("#西直门").mouseleave(function(){
+            $('#L0204').css("z-index", -1).css("opacity",0);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#西单').mouseenter(function () {
+            $('#L0113').css("z-index", 5).css("opacity",1);
+            $('#L0113').mouseenter(function(){
+                console.log('ok');
+                $('#L0113').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L0113').mouseleave(function(){
+            $('#L0113').css("z-index", -1).css("opacity",0);
+        });
+        $("#西单").mouseleave(function(){
+            $('#L0113').css("z-index", -1).css("opacity",0);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#东单').mouseenter(function () {
+            $('#L0117').css("z-index", 5).css("opacity",1);
+            $('#L0117').mouseenter(function(){
+                console.log('ok');
+                $('#L0117').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L0117').mouseleave(function(){
+            $('#L0117').css("z-index", -1).css("opacity",0);
+        });
+        $("#东单").mouseleave(function(){
+            $('#L0117').css("z-index", -1).css("opacity",0);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#宣武门').mouseenter(function () {
+            $('#L0217').css("z-index", 5).css("opacity",1);
+            $('#L0217').mouseenter(function(){
+                console.log('ok');
+                $('#L0217').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L0217').mouseleave(function(){
+            $('#L0217').css("z-index", -1).css("opacity",0);
+        });
+        $("#宣武门").mouseleave(function(){
+            $('#L0217').css("z-index", -1).css("opacity",0);
+        });
+    });
+
+    $(document).ready(function() {
+        $('#崇文门').mouseenter(function () {
+            $('#L0214').css("z-index", 5).css("opacity",1);
+            $('#L0214').mouseenter(function(){
+                console.log('ok');
+                $('#L0214').css("z-index", 5).css("opacity",1);
+            });
+        });
+
+        $('#L0214').mouseleave(function(){
+            $('#L0214').css("z-index", -1).css("opacity",0);
+        });
+        $("#崇文门").mouseleave(function(){
+            $('#L0214').css("z-index", -1).css("opacity",0);
+        });
+    });
+    //点击添加线路页面上的确定按钮，将在先网上添加该条线路及车站
 </script>
 </body>
 </html>

@@ -31,9 +31,57 @@ class DataViewController extends Controller
     }
 
     /**
-     * @Route("/images")
+     * @Route("/xeq")
      */
-    public function imageDisplayAction(){
+    public function xeqDisplayAction(){
+        return $this->render('@LuxueWeb/Default/images.html.twig',array());
+
+    }
+
+    /**
+     * @Route("/zcl")
+     */
+    public function zclDisplayAction(){
+        return $this->render('@LuxueWeb/Default/images.html.twig',array());
+
+    }
+
+    /**
+     * @Route("/hdhz")
+     */
+    public function hdhzDisplayAction(){
+        return $this->render('@LuxueWeb/Default/images.html.twig',array());
+
+    }
+
+    /**
+     * @Route("/xzm")
+     */
+    public function xzmDisplayAction(){
+        return $this->render('@LuxueWeb/Default/images.html.twig',array());
+
+    }
+
+    /**
+     * @Route("/dd")
+     */
+    public function ddDisplayAction(){
+        return $this->render('@LuxueWeb/Default/images.html.twig',array());
+
+    }
+
+    /**
+     * @Route("/xd")
+     */
+    public function xdDisplayAction(){
+        return $this->render('@LuxueWeb/Default/images.html.twig',array());
+
+    }
+
+    /**
+     * @Route("/xwm")
+     */
+    public function xwmDisplayAction(){
         return $this->render('@LuxueWeb/Default/images.html.twig',array());
 
     }

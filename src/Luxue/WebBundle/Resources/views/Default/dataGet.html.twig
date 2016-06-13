@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block main_form %}
-
     <div class="row form-inline">
         <div class=" col-lg-2 form-group">
             <label for="subwayline">线路</label>
@@ -31,22 +30,30 @@
                 <option>旅游景点</option>
                 <option>写字楼</option>
                 <option>政府机构</option>
-                <option>购物中心</option>
+                <option>商场</option>
                 <option>学校</option>
                 <option>医院</option>
             </select>
         </div>
         <div id="form-btn">
             <button  class=" btn btn-default btn-primary" style="margin-right: 40px" onclick="data_get()">百度地图数据获取</button>
-            <button  class=" btn btn-default btn-primary" style="margin-right: 40px" onclick="data_get()">地铁官网数据获取</button>
-            <button  class=" btn btn-default btn-primary" style="margin-right: 40px" onclick="data_get()">客流调查数据获取</button>
 
         </div>
     </div>
 {% endblock %}
 
 {% block nav %}
-    <li class="active"><a href="{{ url('luxue_web_default_dataget')}}">数据获取</a></li>
+    <li class="dropdown active"><a href="{{ url('luxue_web_default_dataget')}}"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据获取<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">土地利用数据</li>
+            <li><a href="{{ url('luxue_web_dateget_getpoi')}}">POI数据</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">规模及连通性数据</li>
+            <li><a href="#">换乘客流数据</a></li>
+            <li><a href="#">公交线路数据</a></li>
+            <li><a href="#">节点介数</a></li>
+        </ul>
+    </li>
     <li><a href="{{url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
     <li><a href="{{url('luxue_web_default_dataview')}}">数据可视化</a></li>
     <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
@@ -167,15 +174,13 @@
  {% endblock %}
 
 {% block table_display %}
-    <div id="button-datademo" style="height: 40px">
-        <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px" onclick="">数据展示</button>
-    </div>
-
+        <button  type="submit" class="btn btn-default btn-primary" style="margin-right: 40px" onclick="displayTable()">原始数据展示</button>
+    <div id="displayTableDiv" style="display: none">
     <table id="eventsTable"
            data-toggle="table"
            data-height="500"
            {#data-url="https://api.github.com/users/wenzhixin/repos?type=owner&sort=full_name&direction=asc&per_page=100&page=1"#}
-           data-url="{{ url('luxue_web_dateget_stationtable') }}"
+           data-url="{{ url('luxue_web_dateget_normalstationtable') }}"
            data-pagination="true"
            data-search="true"
            data-show-refresh="true"
@@ -191,21 +196,31 @@
             <th data-field="forks_count">Forks</th>
             <th data-field="description">Description</th>#}
             <th data-field="id">ID</th>
-            <th data-field="subwayStationName">Name</th>
-            <th data-field="busTransfer_Number">Bus_Num</th>
-            <th data-field="governmentEntity_Number">Gov_Num</th>
-            <th data-field="community_Number">Comm_Num</th>
-            <th data-field="viewPoint_Number">View_Num</th>
-            <th data-field="officeBuilding_Number">Off_Num</th>
-            <th data-field="shoppingMall_Number">Shop_Num</th>
-            <th data-field="hospital_Number">Hosp_Num</th>
-            <th data-field="school_Number">Sch_Num</th>
-            <th data-field="betweenness">Betweenness</th>
+            <th data-field="subwaystationname">站名</th>
+            <th data-field="governmententity_number">政府机构数量</th>
+            <th data-field="community_number">小区数量</th>
+            <th data-field="viewpoint_number">景点数量</th>
+            <th data-field="officebuilding_number">写字楼数量</th>
+            <th data-field="shoppingmall_number">商场数量</th>
+            <th data-field="hospital_number">医院数量</th>
+            <th data-field="school_number">学校数量</th>
+            <th data-field="bustransfer_number">公交线路数量</th>
+            <th data-field="istransferstation">换乘站</th>
         </tr>
         </thead>
     </table>
+        </div>
 
     <script type="text/javascript">
+        var flag = true;
+        function displayTable() {
+            var div = document.getElementById("displayTableDiv");
+            if (flag)
+                div.style.display = "block";
+            else
+                div.style.display = "none";
+            flag = !flag;
+        }
     </script>
 {% endblock %}
 

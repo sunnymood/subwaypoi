@@ -19,6 +19,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
  */
 class DataPredictController extends Controller
 {
+    /**
+     * @Route("/addline16")
+     */
+    public function addLine16Action(){
+        return $this->render("@LuxueWeb/DataPredict/dataPredictAdd16.html.twig",array());
+    }
 
-
+    /**
+     * @Route("/addline03")
+     */
+    public function addLine03Action(){
+        return $this->render("@LuxueWeb/DataPredict/dataPredictAdd03.html.twig",array());
+    }
 }

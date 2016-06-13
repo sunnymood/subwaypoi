@@ -1,14 +1,26 @@
 {% extends '@LuxueWeb/layout.html.twig' %}
 
 {% block private_css %}
+    <link href="{{ asset('bundles/luxueweb/css/bootstrap-table.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block private_js %}
     <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/echarts.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/luxueweb/js/vendor/bootstrap-table.js') }}"></script>
 {% endblock %}
 
 {% block nav %}
-    <li><a href="{{ url('luxue_web_default_dataget') }}">数据获取</a></li>
+    <li class="dropdown"><a href="{{ url('luxue_web_default_dataget')}}"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据获取<span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">土地利用数据</li>
+            <li><a href="{{ url('luxue_web_default_dataget')}}">POI数据</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">规模及连通性数据</li>
+            <li><a href="#">换乘客流数据</a></li>
+            <li><a href="#">公交线路数据</a></li>
+            <li><a href="#">节点介数</a></li>
+        </ul>
+    </li>
     <li class="active"><a href="{{ url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
     <li><a href="{{ url('luxue_web_default_dataview') }}">数据可视化</a></li>
     <li><a href="{{ url('luxue_web_default_datapredict') }}">规划预测</a></li>
@@ -18,19 +30,71 @@
 {% endblock %}
 
 {% block table_display %}
-    <button type="submit" class="col-lg-1 btn btn-default btn-primary" style="margin-right: 40px;margin-top: 30px"
-            onclick="">数据展示
-    </button>
+        <button type="submit" class="btn btn-default btn-primary" style="margin-top: 20px;margin-right: 40px" onclick="displayTableDelay()">模型计算结果展示</button>
+    <div id="displayTableDiv" style="display: none">
+        <table id="eventsTable"
+               data-toggle="table"
+               data-height="500"
+                {#data-url="https://api.github.com/users/wenzhixin/repos?type=owner&sort=full_name&direction=asc&per_page=100&page=1"#}
+               data-url="{{ url('luxue_web_dateget_stationtable') }}"
+               data-pagination="true"
+               data-search="true"
+               data-show-refresh="true"
+               data-show-toggle="true"
+               data-show-columns="true"
+               data-toolbar="#toolbar"
+               style="margin-top: 50px">
+            <thead>
+            <tr>
+                {# <th data-field="state" data-checkbox="true"></th>
+                 <th data-field="name">Name</th>
+                 <th data-field="stargazers_count">Stars</th>
+                 <th data-field="forks_count">Forks</th>
+                 <th data-field="description">Description</th>#}
+                <th data-field="id">ID</th>
+                <th data-field="subwayStationName">站名</th>
+                <th data-field="governmentEntity_Number">政府机构数量</th>
+                <th data-field="community_Number">小区数量</th>
+                <th data-field="viewPoint_Number">景点数量</th>
+                <th data-field="officeBuilding_Number">写字楼数量</th>
+                <th data-field="shoppingMall_Number">商场数量</th>
+                <th data-field="hospital_Number">医院数量</th>
+                <th data-field="school_Number">学校数量</th>
+                <th data-field="busTransfer_Number">公交线路数量</th>
+                {#<th data-field="betweenness">节点介数</th>#}
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        var flag = true;
+        function displayTable() {
+            var div = document.getElementById("displayTableDiv");
+            if (flag)
+                div.style.display = "block";
+            else
+                div.style.display = "none";
+            flag = !flag;
+        }
+
+        function displayTableDelay()
+        {
+            var t=setTimeout("displayTable()",3000)
+        }
+    </script>
 {% endblock %}
 
 {% block map_display_js %}
 {% endblock %}
 
 {% block echarts_display_radar %}
-    <div id="main" style="width: 1140px;height:600px;"></div>
+    <button type="submit" class="btn btn-default btn-primary" style="margin-top: 20px;margin-right: 40px" onclick="displayRadar()">典型换乘站土地利用信息</button>
+    <div id="echart_radar" style="display: none;width: 1140px;height:600px;">
+    </div>
     <script type="text/javascript">
         // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
+        var myChart = echarts.init(document.getElementById('echart_radar'));
 
         // 指定图表的配置项和数据
         option = {
@@ -60,8 +124,7 @@
                     {text: '写字楼', max: 250},
                     {text: '商场', max: 50},
                     {text: '医院', max: 200},
-                    {text: '学校', max: 500},
-                    {text: '节点度数', max: 50000}
+                    {text: '学校', max: 500}
                 ]
             },
             series: [
@@ -128,7 +191,7 @@
 //            },
             {
                 value: [
-                    34, 126, 119, 10.5, 16.5, 15, 31.5, 28.5, 35737
+                    34, 126, 119, 10.5, 16.5, 15, 31.5, 28.5
 
 
                 ],
@@ -136,13 +199,13 @@
             },
             {
                 value: [
-                    69, 154.5, 123.5, 14.5, 66, 4.5, 29, 29.5, 41092
+                    69, 154.5, 123.5, 14.5, 66, 4.5, 29, 29.5
                 ],
                 name: "L0112-复兴门"
             },
             {
                 value: [
-                    68.5, 137.5, 97, 61.5, 15.5, 8.5, 16, 29, 33526
+                    68.5, 137.5, 97, 61.5, 15.5, 8.5, 16, 29
 
 
                 ],
@@ -150,7 +213,7 @@
             },
             {
                 value: [
-                    30.5, 97.5, 34.5, 23, 31, 10, 10.5, 13, 43638
+                    30.5, 97.5, 34.5, 23, 31, 10, 10.5, 13
 
 
                 ],
@@ -158,7 +221,7 @@
             },
             {
                 value: [
-                    32.5, 48, 106, 10, 22.5, 2.5, 2.5, 11, 49358
+                    32.5, 48, 106, 10, 22.5, 2.5, 2.5, 11
 
 
                 ],
@@ -166,7 +229,7 @@
             },
             {
                 value: [
-                    113.5, 262.5, 1206, 37, 137, 17, 97.5, 91.5, 38718
+                    113.5, 262.5, 1206, 37, 137, 17, 97.5, 91.5
 
 
                 ],
@@ -178,7 +241,7 @@
 //
             {
                 value: [
-                    117, 212.5, 658, 78.5, 102, 24.5, 77, 189, 15712
+                    60, 72.5, 658, 78.5, 50, 11, 47, 89
 
 
                 ],
@@ -186,7 +249,7 @@
             },
             {
                 value: [
-                    89.5, 16, 529, 63.5, 36, 14.5, 52.5, 174, 6120
+                    89.5, 66, 529, 63.5, 36, 14.5, 52.5, 174
 
 
                 ],
@@ -194,7 +257,7 @@
             },
             {
                 value: [
-                    41, 135, 145, 13, 62.5, 2.5, 29.5, 50, 40904
+                    41, 135, 145, 13, 62.5, 2.5, 29.5, 50
 
 
                 ],
@@ -202,7 +265,7 @@
             },
             {
                 value: [
-                    61, 206.5, 308.5, 71, 63.5, 7.5, 55.5, 117.5, 47676
+                    120, 406.5, 608.5, 70, 113.5, 20.5, 100.5, 217.5
 
 
                 ],
@@ -210,7 +273,7 @@
             },
             {
                 value: [
-                    45.5, 183.5, 152, 54, 25.5, 1, 30, 44, 38448
+                    45.5, 183.5, 152, 54, 25.5, 1, 30, 44
 
 
                 ],
@@ -223,7 +286,247 @@
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
     </script>
+    <script type="text/javascript">
+        var flag = true;
+        function displayRadar() {
+            var div = document.getElementById("echart_radar");
+            if (flag)
+                div.style.display = "block";
+            else
+                div.style.display = "none";
+            flag = !flag;
+        }
+    </script>
 {% endblock %}
+
+{% block echarts_display_scatter %}
+    <button type="submit" class="btn btn-default btn-primary" style="margin-top: 20px;margin-right: 40px" onclick="displayScatter()">换乘站规模及连通性</button>
+    <div id="echart_scatter" style="display: none;margin-top:20px;width: 1140px;height:600px;"></div>
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('echart_scatter'));
+        var dataBJ = [
+            [206,25662,96459,'公主坟'],
+            [34,35737,96024,'军事博物馆'],
+            [69,41092,137967,'复兴门'],
+            [68.5,33526,131313,'西单'],
+            [30.5,43638,135824,'东单'],
+            [32.5,49358,178476,'建国门'],
+            [113.5,38718,163669,'国贸'],
+            [117,15712,124170,'四惠'],
+            [89.5,6120,116181,'四惠东'],
+            [41,40904,51849,'车公庄'],
+            [260,47676,274357,'西直门'],
+            [45.5,38448,89622,'鼓楼大街'],
+            [74,35648,105093,'雍和宫'],
+            [15.5,36118,85789,'东直门'],
+            [22.5,42654,91323,'朝阳门'],
+            [19.5,44757,92307,'崇文门'],
+            [53.5,35862,149904,'宣武门'],
+            [411.5,17936,136764,'海淀黄庄'],
+            [82.5,33613,138761,'国家图书馆'],
+            [48,45872,92375,'平安里'],
+            [104,37173,115949,'菜市口'],
+            [411.5,22349,139414,'角门西'],
+            [199.5,30845,214658,'宋家庄'],
+            [212,32012,115079,'磁器口'],
+            [22.5,38471,86120,'东四'],
+            [84.5,27747,177268,'惠新西街南口'],
+            [133,21475,79155,'立水桥'],
+            [151.5,25787,41603,'慈寿寺'],
+            [50,34045,70398,'白石桥南'],
+            [19,28362,57735,'南锣鼓巷'],
+            [117,40301,181365,'呼家楼'],
+            [176.5,16702,85290,'金台路'],
+            [95.5,32826,46165,'北京西站'],
+            [42,9527,32694,'朱辛庄'],
+            [35.5,16310,40139,'霍营'],
+            [88.5,24935,52005,'奥林匹克公园'],
+            [65.5,19168,105664,'北土城'],
+            [85,10030,94192,'郭公庄'],
+            [49,20097,23988,'七里庄'],
+            [37.5,29866,75678,'六里桥'],
+            [59.5,35246,108745,'知春路'],
+            [18.5,31732,82125,'芍药居'],
+            [71,28657,98675,'三元桥'],
+            [18,30745,26775,'西局'],
+            [9,17358,108295,'西二旗'],
+            [4,27278,91172,'望京西'],
+            [320.5,19633,43697,'望京']
+        ];
+
+
+        var schema = [
+            {name: 'name', index: 0, text: '公交线路数'},
+            {name: 'betweenness', index: 1, text: '节点介数'},
+            {name: 'traffic', index: 2, text: '换乘量'},
+            {name: 'buslines', index: 3, text: '站名'}
+        ];
+
+
+        var itemStyle = {
+            normal: {
+                opacity: 0.8,
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowOffsetY: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+        };
+
+        option = {
+            backgroundColor: '#333',
+            color: [
+                '#dd4444', '#fec42c', '#80F1BE'
+            ],
+            legend: {
+                y: 'top',
+                data: ['北京地铁'],
+                textStyle: {
+                    color: '#fff',
+                    fontSize: 16
+                }
+            },
+            grid: {
+                x: '10%',
+                x2: 150,
+                y: '18%',
+                y2: '10%'
+            },
+            tooltip: {
+                padding: 10,
+                backgroundColor: '#222',
+                borderColor: '#777',
+                borderWidth: 1,
+                formatter: function (obj) {
+                    var value = obj.value;
+                    return '<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px">'
+                            + obj.seriesName + ' ' + '：'+value[3]
+                            +'</div>'
+                            + schema[0].text + '：' + value[0] +'条'+'<br>'
+                            + schema[1].text + '：' + value[1] +' '+'<br>'
+                            + schema[2].text + '：' + value[2] +' '+'人/次'+'<br>';
+                }
+            },
+
+            xAxis:  //按照data的顺序，数组中的第一个元素对应x轴，第二个元素对应y轴
+            {
+                type: 'value',
+                name: '公交线路数',
+                nameGap: 16,
+                nameTextStyle: {
+                    color: '#fff',
+                    fontSize: 14
+                },
+                max: 450,
+                splitLine: {
+                    show: false
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#777'
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: '#777'
+                    }
+                },
+                axisLabel: {
+                    formatter: '{value}',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                }
+            },
+            yAxis:
+            {
+                type: 'value',
+                name: '节点介数',
+                nameGap: 16,
+                nameTextStyle: {
+                    color: '#fff',
+                    fontSize: 14
+                },
+                max: 50000,
+                splitLine: {
+                    show: false
+                },
+                axisLine: {
+                    lineStyle: {
+                        color: '#777'
+                    }
+                },
+                axisTick: {
+                    lineStyle: {
+                        color: '#777'
+                    }
+                },
+                axisLabel: {
+                    formatter: '{value}',
+                    textStyle: {
+                        color: '#fff'
+                    }
+                }
+            },
+            visualMap: [
+                {
+                    left: 'right',
+                    top: '10%',
+                    dimension: 2,
+                    min: 0,
+                    max: 150000,
+                    itemWidth: 30,
+                    itemHeight: 120,
+                    calculable: true,
+                    precision: 0,
+                    text: ['圆形大小：换乘量'],
+                    textGap: 30,
+                    textStyle: {
+                        color: '#fff'
+                    },
+                    inRange: {
+                        symbolSize: [20, 70]
+                    },
+                    outOfRange: {
+                        symbolSize: [20, 70],
+                        color: ['rgba(255,255,255,.2)']
+                    },
+                    controller: {
+                        inRange: {
+                            color: ['#c23531']
+                        },
+                        outOfRange: {
+                            color: ['#444']
+                        }
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '北京地铁',
+                    type: 'scatter',
+                    itemStyle: itemStyle,
+                    data: dataBJ
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+    <script type="text/javascript">
+        var flag = true;
+        function displayScatter() {
+            var div = document.getElementById("echart_scatter");
+            if (flag)
+                div.style.display = "block";
+            else
+                div.style.display = "none";
+            flag = !flag;
+        }
+    </script>
+{% endblock %}
+
+
 
 {% block layout_slogan %}
 {% endblock %}

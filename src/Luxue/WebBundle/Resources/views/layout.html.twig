@@ -69,7 +69,17 @@
             <nav>
                 <ul class="nav nav-justified">
                     {% block nav %}
-                    <li><a href="{{ url('luxue_web_default_dataget')}}">数据获取</a></li>
+                    <li class="dropdown"><a href="{{ url('luxue_web_default_dataget')}}"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">数据获取<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-header">土地利用数据</li>
+                            <li><a href="{{ url('luxue_web_default_dataget')}}">POI数据</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">规模及连通性数据</li>
+                            <li><a href="#">换乘客流数据</a></li>
+                            <li><a href="#">公交线路数据</a></li>
+                            <li><a href="#">节点介数</a></li>
+                        </ul>
+                    </li>
                     <li><a href="{{url('luxue_web_default_dataanalysis') }}">数据分析</a></li>
                     <li><a href="{{url('luxue_web_default_dataview')}}">数据可视化</a></li>
                     <li><a href="{{url('luxue_web_default_datapredict')}}">规划预测</a></li>
@@ -88,7 +98,13 @@
         {% block table_display %}
         {% endblock %}
 
+        {% block table_display_1 %}
+        {% endblock %}
+
         {% block echarts_display_radar %}
+        {% endblock %}
+
+        {% block echarts_display_scatter %}
         {% endblock %}
 
         {% block echarts_display_2 %}
@@ -104,7 +120,6 @@
         <div class="center-word">
             <h1 class="text-right">欢迎来到地铁数据分析与预测系统</h1>
             <h3 class="text-right">以北京地铁为例</h3>
-            <h3 class="text-right"><a href="" class="btn btn-lg btn-default">Start Now!</a></h3>
         </div>
     {% endblock %}
 

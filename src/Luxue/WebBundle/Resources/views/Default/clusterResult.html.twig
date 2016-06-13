@@ -2,6 +2,56 @@
 
 {% extends '@LuxueWeb/Default/dataView.html.twig' %}
 
+
+
 {% block cluster_link %}
-    <button type="button" class="col-lg-2 btn btn-primary" onclick="">聚类结果展示</button>
+    <button type="button" class="btn btn-primary" onclick="displayClusterResultDelay()">聚类结果展示</button>
+    <div id="clusterresultTableDiv" style="display: none;">
+        <table id="eventsTable"
+               data-toggle="table"
+               data-height="500"
+                {#data-url="https://api.github.com/users/wenzhixin/repos?type=owner&sort=full_name&direction=asc&per_page=100&page=1"#}
+               data-url="{{ url('luxue_web_dataresult_getclusterresult') }}"
+               data-pagination="true"
+               data-search="true"
+               data-show-refresh="true"
+               data-show-toggle="true"
+               data-show-columns="true"
+               data-toolbar="#toolbar"
+               style="margin-top: 50px">
+            <thead>
+            <tr>
+                {# <th data-field="state" data-checkbox="true"></th>
+                 <th data-field="name">Name</th>
+                 <th data-field="stargazers_count">Stars</th>
+                 <th data-field="forks_count">Forks</th>
+                 <th data-field="description">Description</th>#}
+                <th data-field="id">ID</th>
+                <th data-field="subwayStationName">站名</th>
+                <th data-field="clusterclass">所属类别</th>
+                {#<th data-field="betweenness">节点介数</th>#}
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <script type="text/javascript">
+        var flag = true;
+
+
+        //settimeout("displayClusterResult()","2000");
+        function displayClusterResult(){
+            var div = document.getElementById("clusterresultTableDiv");
+            if(flag)
+                div.style.display = "block";
+            else
+                div.style.display = "none";
+            flag = !flag;
+        }
+
+        function displayClusterResultDelay()
+        {
+            var t=setTimeout("displayClusterResult()",2000)
+        }
+    </script>
 {% endblock %}

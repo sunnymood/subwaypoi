@@ -19,7 +19,7 @@
 
 {% block addlines_area %}
     <br>
-    <button type="button" class="col-lg-2 btn btn-primary" data-toggle="modal" data-target="#addLineModal">添加线路</button>
+    {#<button type="button" class="col-lg-2 btn btn-primary" data-toggle="modal" data-target="#addLineModal">添加线路</button>#}
 
     <!-- Modal -->
     <div class="modal fade" id="addLineModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -65,7 +65,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn  btn-primary" onclick="chooseRadio()">确定</button>
+                    <button type="button" class="btn btn-default" onclick="chooseRadio()">确定</button>
                 </div>
             </div>
         </div>
@@ -87,9 +87,9 @@
                                 <li>北京地铁13号线</li>
                             </ul>
                         </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
+                        <li style="text-decoration-color: #0000F0">分析结果：</li>
                         <ul>
-                            <li style="text-decoration-color: #0000F0">中型接驳商务型</li>
+                            <li style="text-decoration-color: #0000F0">客流吸引级别 3</li>
                             <li><a href="{{ url('luxue_web_dataview_xeqdisplay')}}" target="_blank">车站详细数据</a></li>
                         </ul>
                     </ul>
@@ -103,110 +103,10 @@
                                 <li>北京地铁13号线</li>
                             </ul>
                         </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
+                        <li style="text-decoration-color: #0000F0">分析结果：</li>
                         <ul>
-                            <li style="text-decoration-color: #0000F0">中型中转居住型</li>
+                            <li style="text-decoration-color: #0000F0">客流吸引级别 3</li>
                             <li><a href="{{ url('luxue_web_dataview_zcldisplay')}}" target="_blank">车站详细数据</a></li>
-                        </ul>
-                    </ul>
-                </div>
-                <div class="labelbox labelbox-L0407" id="L0407"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:90px;left: 372px;background-color:#e5e5e5">
-                    <ul class="labelbox-ul">
-                        <li >车站名称：海淀黄庄</li>
-                        <li >所属线路：
-                            <ul>
-                                <li>北京地铁4号线</li>
-                                <li>北京地铁10号线</li>
-                            </ul>
-                        </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
-                        <ul>
-                            <li style="text-decoration-color: #0000F0">中型中转混合型</li>
-                            <li><a href="{{ url('luxue_web_dataview_hdhzdisplay')}}" target="_blank">车站详细数据</a></li>
-                        </ul>
-                    </ul>
-                </div>
-                <div class="labelbox labelbox-L0204" id="L0204"  style="width: 200px;height: 160px;position: absolute; z-index: -1;opacity:0;top:140px;left: 444px;background-color:#e5e5e5">
-                    <ul class="labelbox-ul">
-                        <li >车站名称：西直门</li>
-                        <li >所属线路：
-                            <ul>
-                                <li>北京地铁2号线</li>
-                                <li>北京地铁4号线</li>
-                                <li>北京地铁13号线</li>
-                            </ul>
-                        </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
-                        <ul>
-                            <li style="text-decoration-color: #0000F0">大型中转混合型</li>
-                            <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
-                        </ul>
-                    </ul>
-                </div>
-                <div class="labelbox labelbox-L0113" id="L0113"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:224px;left: 478px;background-color:#e5e5e5">
-                    <ul class="labelbox-ul">
-                        <li >车站名称：西单</li>
-                        <li >所属线路：
-                            <ul>
-                                <li>北京地铁1号线</li>
-                                <li>北京地铁4号线</li>
-                            </ul>
-                        </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
-                        <ul>
-                            <li style="text-decoration-color: #0000F0">中型中转商务型</li>
-                            <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="labelbox labelbox-L0117" id="L0117"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:224px;left: 567px;background-color:#e5e5e5">
-                    <ul class="labelbox-ul">
-                        <li >车站名称：东单</li>
-                        <li >所属线路：
-                            <ul>
-                                <li>北京地铁1号线</li>
-                                <li>北京地铁5号线</li>
-                            </ul>
-                        </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
-                        <ul>
-                            <li style="text-decoration-color: #0000F0">中型中转商务型</li>
-                            <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="labelbox labelbox-L0217" id="L0217"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:244px;left: 478px;background-color:#e5e5e5">
-                    <ul class="labelbox-ul">
-                        <li >车站名称：宣武门</li>
-                        <li >所属线路：
-                            <ul>
-                                <li>北京地铁2号线</li>
-                                <li>北京地铁4号线</li>
-                            </ul>
-                        </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
-                        <ul>
-                            <li style="text-decoration-color: #0000F0">中型中转商务型</li>
-                            <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
-                        </ul>
-                    </ul>
-                </div>
-
-                <div class="labelbox labelbox-L0214" id="L0214"  style="width: 200px;height: 140px;position: absolute; z-index: -1;opacity:0;top:244px;left: 567px;background-color:#e5e5e5">
-                    <ul class="labelbox-ul">
-                        <li >车站名称：崇文门</li>
-                        <li >所属线路：
-                            <ul>
-                                <li>北京地铁2号线</li>
-                                <li>北京地铁5号线</li>
-                            </ul>
-                        </li>
-                        <li style="text-decoration-color: #0000F0">所属类别：</li>
-                        <ul>
-                            <li style="text-decoration-color: #0000F0">中型中转商务型</li>
-                            <li><a href="{{ url('luxue_web_dataview_xzmdisplay')}}" target="_blank">车站详细数据</a></li>
                         </ul>
                     </ul>
                 </div>
@@ -223,8 +123,15 @@
                         <!--开始线路绘制-->
                         <g id="subwayLine_layer" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,25.00000000,-133.00000000)"
                            style="display: block;">
-                            <g>
-                            </g>
+                                                        <g>
+                                                        </g>
+                            {#添加16号线路径#}
+                            <path fill="none" fill-opacity="0" stroke="rgb(221, 37, 89)" stroke-opacity="1"
+                                  stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                                  path="M 375,200 405,200 425,200 440,200 460,200 460,215 460,230 460,244 460,258 460,272"
+                                  d="M 375 200 405 200 425 200 440 200 460 200 460 215 460 230 460 244 460 258 460 272"
+                                  stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </path>
                             <path fill="none" fill-opacity="0" stroke="rgb(217, 37, 40)" stroke-opacity="1"
                                   stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
                                   path="M 317,438 327,454 353,454 383,454 407,454 431,454 453,454 475,454 502,454 531,454 555,454 572,454 605,454 627,454 653,454 677,454 694,454 723,454 755,454 770,454 797,454 814,454 831,454"
@@ -338,7 +245,75 @@
                            style="display: block;">
                             <g>
                             </g>
+
                             <!--circle为普通车站，image为换乘车站，通过(cx,cy)标记线网上的位置-->
+
+                            {#添加16号线车站#}
+{#                            <path fill="none" fill-opacity="0" stroke="rgb(221, 37, 89)" stroke-opacity="1"
+                                  stroke-width="4" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4"
+                                  path="M 375,200 405,200 425,200 440,200 460,200 460,215 460,230 460,244 460,258 460,272"
+                                  d="M 375 200 405 200 425 200 440 200 460 200 460 215 460 230 460 244 460 258 460 272"
+                                  stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </path>#}
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="375" cy="200" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="405" cy="200" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="425" cy="200" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="440" cy="200" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="460" cy="200" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="460" cy="215" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="460" cy="230" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="460" cy="244" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="460" cy="258" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(221, 37, 89)"
+                                    stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
+                                    stroke-miterlimit="4" cx="460" cy="272" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
+                                    fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
+                            </circle>
+                            {#西苑站#}
+
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                                   stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="454"
+                                   y="266" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                   xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                            </image>
+
+                            {#结束16号线北段车站添加#}
                             <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(217, 37, 40)"
                                     stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
                                     stroke-miterlimit="4" cx="677" cy="454" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
@@ -449,13 +424,13 @@
                                     stroke-miterlimit="4" cx="694" cy="440" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <image id="东单" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
                                    y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                             </image>
 
-                            <image id="崇文门" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="688"
                                    y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -680,10 +655,10 @@
                                     stroke-miterlimit="4" cx="578" cy="469" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <image  fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
-                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
-                                    y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                                   stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
+                                   y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                   xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                             </image>
                             <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(22, 109, 178)"
                                     stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
@@ -720,12 +695,12 @@
                                     stroke-miterlimit="4" cx="605" cy="438" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <image id="西单" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
                                    y="448" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                             </image>
-                            <image id="宣武门" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="599"
                                    y="468" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -895,7 +870,7 @@
                                     stroke-miterlimit="4" cx="770" cy="367" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <image id="西直门" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="566"
                                    y="384" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -1095,11 +1070,17 @@
                                     stroke-miterlimit="4" cx="436" cy="272" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
+                            <!-- 4号线上的西苑站用image标识-->
+                            {#<circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
                                     stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
                                     stroke-miterlimit="4" cx="460" cy="272" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
-                            </circle>
+                            </circle>#}
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                                   stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="454"
+                                   y="266" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                   xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                            </image>
                             <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
                                     stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
                                     stroke-miterlimit="4" cx="498" cy="277" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
@@ -1115,10 +1096,10 @@
                                     stroke-miterlimit="4" cx="498" cy="305" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <image  fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
-                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
-                                    y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                                   stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
+                                   y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                   xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
                             </image>
                             <circle fill="rgb(255, 255, 255)" fill-opacity="1" stroke="rgb(2, 169, 187)"
                                     stroke-opacity="1" stroke-width="3" stroke-linecap="butt" stroke-linejoin="miter"
@@ -1290,7 +1271,7 @@
                                     stroke-miterlimit="4" cx="473" cy="327" r="4" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)"
                                     fill-rule="evenodd" stroke-dasharray="none" dojoGfxStrokeStyle="solid">
                             </circle>
-                            <image id="海淀黄庄" fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
+                            <image fill-opacity="0" stroke="none" stroke-opacity="0" stroke-width="1"
                                    stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="4" x="492"
                                    y="321" width="12" height="12" preserveAspectRatio="none" xmlns:xlink="http://www.w3.org/1999/xlink"
                                    xlink:href="{{ asset('bundles/luxueweb/images/chg_stat.png') }} " opacity="1" transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,0.00000000,0.00000000)">
@@ -2005,7 +1986,7 @@
 {% endblock %}
 
 {% block cluster_link %}
-    {#<button type="button" class="col-lg-2 btn btn-primary" onclick="predictResult()" >显示预测结果</button>#}
+    <button type="button" class="col-lg-2 btn btn-primary" onclick="predictResultDelay()" >显示预测结果</button>
     <div id="predictResultDiv" style="display: none;">
         <table class="table table-bordered">
             <caption style="text-align: center;color: #0f0f0f">规划换乘站预测</caption>
@@ -2045,9 +2026,14 @@
             flag = !flag;
         }
 
+        function predictResultDelay()
+        {
+            var t=setTimeout("predictResult()",2000)
+        }
+
         function chooseRadio() {
             if (document.getElementById("optionsRadios_L16").checked)
-                    window.location.href="http://localhost:8000/datapredict/addline16";
+                window.location.href="http://localhost:8000/datapredict/addline16";
             if (document.getElementById("optionsRadios_L03").checked)
                 window.location.href="http://localhost:8000/datapredict/addline03";
         }
